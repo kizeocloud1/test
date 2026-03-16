@@ -10,7 +10,7 @@
         
         .main-container { width: 1750px; margin: 0 auto; text-align: left; } 
 
-        .header { overflow: hidden; margin-bottom: 25px; border-bottom: 5px solid #ff6b35; padding-bottom: 20px; }
+        .header { overflow: hidden; margin-bottom: 25px; border-bottom: 5px solid #ff6b35; padding-bottom: 20px; text-align: center; }
         .logo-img { height: 115px; float: left; cursor: pointer; }
 
         .social-container { float: right; background: #0a1a2a; padding: 10px 30px; border-radius: 60px; border: 3px solid #ff6b35; margin-top: 15px; }
@@ -90,11 +90,13 @@
             vertical-align: middle;
             line-height: 46px;
         }
+        /* CREDITOS MOVIDOS AL HEADER */
         .credits-banner {
-            height: 50px;
-            vertical-align: middle;
+            height: 42px;
             display: inline-block;
-            margin-left: 120px;   
+            margin-top: 73px;
+            margin-bottom: -20px;
+            vertical-align: bottom;
         }
         .stats {
             display: inline-block;
@@ -148,6 +150,9 @@
 <div class="main-container">
     <div class="header clearfix">
         <img src="recursos/titulo.png" alt="Logo" class="logo-img" onclick="volverInicio()">
+        
+        <img src="recursos/credits.png" class="credits-banner">
+
         <div class="social-container">
             <a href="https://www.youtube.com/@kizeo0/videos"><img src="recursos/yt.png" class="social-icon"></a>
             <a href="https://github.com/kizeo0"><img src="recursos/git.png" class="social-icon"></a>
@@ -165,7 +170,6 @@
                 <button class="sort-btn btn-adult" id="adultBtn" onclick="toggleAdulto()">+18 OFF</button>
                 <button class="sort-btn btn-genre-active" id="genreActiveBtn" onclick="volverInicio()"></button>
             </div>
-            <img src="recursos/credits.png" class="credits-banner">
         </div>
         <div class="toolbar-right">
             <span class="stats" id="stats">...</span>
