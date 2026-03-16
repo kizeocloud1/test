@@ -192,7 +192,7 @@
 var isPS3 = /PS3|PlayStation 3|NetFront/i.test(navigator.userAgent);
 var G_EMPTY_GIF = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 
-// >>> NUEVA URL DEL JSON EN CLOUDFLARE (actualizada) <<<
+// >>> NUEVA URL DEL JSON EN CLOUDFLARE <<<
 var JSON_URL = 'https://empty-base-9162.kizeocloud.workers.dev/temas_ps3_conlinks.json';
 
 var PAGE_SIZE = 12;
@@ -233,12 +233,21 @@ var adultBtn = document.getElementById('adultBtn');
 var genreActiveBtn = document.getElementById('genreActiveBtn');
 
 // ============================================================
-// 3. CARGA DEL JSON (con caché)
+// 3. CARGA DEL JSON (VERSIÓN MEJORADA CON DIAGNÓSTICO)
 // ============================================================
+function escapeHTML(str) {
+    return str.replace(/&/g, '&amp;')
+              .replace(/</g, '&lt;')
+              .replace(/>/g, '&gt;')
+              .replace(/"/g, '&quot;')
+              .replace(/'/g, '&#039;');
+}
+
 function cargarJSON() {
     var data = null;
     var now = new Date().getTime();
 
+    // Intentar cargar desde caché
     if (typeof localStorage !== 'undefined') {
         try {
             var cached = localStorage.getItem(CACHE_KEY);
@@ -259,8 +268,18 @@ function cargarJSON() {
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4) {
                 if (xhr.status === 200 || xhr.status === 0) {
+                    var responseText = xhr.responseText;
+
+                    // --- DIAGNÓSTICO: Mostrar los primeros caracteres en la página ---
+                    var preview = responseText.length > 200 ? responseText.substring(0, 200) + '...' : responseText;
+                    grid.innerHTML = '<div style="color:orange; text-align:left; padding:20px;">' +
+                                     '<b>Recibidos ' + responseText.length + ' caracteres.</b><br>' +
+                                     '<b>Primeros caracteres:</b><br><pre style="background:#111; color:#0f0; padding:10px;">' + escapeHTML(preview) + '</pre>' +
+                                     '<i>Procesando...</i></div>';
+
                     try {
-                        var jsonData = JSON.parse(xhr.responseText);
+                        var jsonData = JSON.parse(responseText);
+                        // Si llega hasta aquí, el JSON es válido
                         if (typeof localStorage !== 'undefined') {
                             try {
                                 localStorage.setItem(CACHE_KEY, JSON.stringify({
@@ -271,8 +290,16 @@ function cargarJSON() {
                         }
                         procesarDatos(jsonData);
                     } catch(e) {
-                        grid.innerHTML = '<div style="color:red">Error al procesar JSON.</div>';
+                        // Mostrar el error detallado
+                        grid.innerHTML = '<div style="color:red; text-align:left; padding:20px;">' +
+                                         '<b>ERROR AL PARSEAR JSON:</b><br>' +
+                                         e.message + '<br><br>' +
+                                         '<b>Primeros 200 caracteres recibidos:</b><br>' +
+                                         '<pre style="background:#111; color:#f66; padding:10px;">' + escapeHTML(preview) + '</pre>' +
+                                         '</div>';
                     }
+                } else {
+                    grid.innerHTML = '<div style="color:red">Error HTTP al cargar JSON: ' + xhr.status + '</div>';
                 }
             }
         };
