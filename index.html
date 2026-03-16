@@ -140,22 +140,10 @@
 
         .footer { margin-top: 50px; border-top: 3px solid #ff6b3540; padding: 25px 0; color: #b0c8e0; font-size: 16px; }
         .clearfix::after { content: ""; display: table; clear: both; }
-
-        /* Placeholder para imágenes que aún no cargan o fallan */
-        .preview .img-placeholder {
-            display: inline-block;
-            width: 120px;
-            height: 180px;
-            background: #1a2a3a;
-            border-radius: 10px;
-            color: #ffb28c;
-            line-height: 180px;
-            text-align: center;
-            font-size: 14px;
-        }
     </style>
 </head>
 <body>
+
 <div class="main-container">
     <div class="header clearfix">
         <img src="recursos/titulo.png" alt="Logo" class="logo-img" onclick="volverInicio()">
@@ -166,6 +154,7 @@
         </div>
     </div>
 
+    <!-- TOOLBAR CORREGIDO -->
     <div class="toolbar">
         <div class="toolbar-left">
             <div class="search-wrapper">
@@ -200,7 +189,7 @@
 
 <script>
 // ============================================================
-// 1. DETECCIÓN DE PS3 Y CONSTANTES
+// 1. DETECCIÓN DE PS3 Y CONSTANTES (basado en referencias)
 // ============================================================
 var isPS3 = /PS3|PlayStation 3|NetFront/i.test(navigator.userAgent);
 var G_EMPTY_GIF = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
@@ -227,8 +216,8 @@ var mostrarContenidoAdulto = false;
 var esModoAleatorio = false;
 var searchTimer = null;
 
-// Para lazy loading
-var imageQueue = [];           // Cola de imágenes pendientes (solo PS3)
+// Para lazy loading (como en referencia 2)
+var imageQueue = [];          // Cola de imágenes (solo PS3)
 var isProcessingQueue = false;
 var scrollTimer = null;
 var container = null;          // El div grid
@@ -242,13 +231,13 @@ var adultBtn = document.getElementById('adultBtn');
 var genreActiveBtn = document.getElementById('genreActiveBtn');
 
 // ============================================================
-// 3. CARGA DEL JSON (con caché)
+// 3. CARGA DEL JSON (con caché, como referencia 1)
 // ============================================================
 function cargarJSON() {
     var data = null;
     var now = new Date().getTime();
 
-    // Intentar recuperar de localStorage (solo si no es PS3 o si tiene espacio)
+    // Intentar recuperar de localStorage
     if (typeof localStorage !== 'undefined') {
         try {
             var cached = localStorage.getItem(CACHE_KEY);
@@ -309,7 +298,7 @@ function procesarDatos(data) {
 cargarJSON();
 
 // ============================================================
-// 4. FILTROS Y BÚSQUEDA
+// 4. FILTROS Y BÚSQUEDA (sin cambios, solo funciones)
 // ============================================================
 window.buscarConRetraso = function() {
     clearTimeout(searchTimer);
@@ -374,14 +363,14 @@ window.volverInicio = function() {
 
 window.modoAleatorio = function() {
     esModoAleatorio = true;
-    // Mezclar aleatoriamente (copia superficial)
+    // Mezclar aleatoriamente
     filteredThemes = filteredThemes.slice().sort(function() { return 0.5 - Math.random(); });
     currentPage = 0;
     render();
 };
 
 // ============================================================
-// 5. RENDERIZADO CON LAZY LOADING
+// 5. RENDERIZADO CON LAZY LOADING (inspirado en referencia 2)
 // ============================================================
 function limpiarParaJS(str) {
     return encodeURIComponent(str).replace(/'/g, "%27");
@@ -394,10 +383,10 @@ function crearHTMLTarjeta(t, destacado) {
     var generoEscapado = t.genero.replace(/'/g, "\\'");
     var idUnico = 'img_' + t.nombre.replace(/[^a-zA-Z0-9]/g, '_') + '_' + Math.random().toString(36).substr(2, 8);
 
-    // En lugar de src, usamos data-src y un placeholder base64
+    // Usamos src vacío y data-src con la URL real (como referencia 2)
     return '<div class="theme-card"' + estiloExtra + ' data-title="' + t.nombre + '">' +
             '<div class="preview">' +
-                '<img id="' + idUnico + '" src="' + G_EMPTY_GIF + '" data-src="' + folder + imgName + '" data-folder-index="' + t.preview_idx + '" data-imgname="' + imgName + '" style="opacity:0; transition:opacity 0.2s;">' +
+                '<img id="' + idUnico + '" src="' + G_EMPTY_GIF + '" data-src="' + folder + imgName + '" data-folder-index="' + t.preview_idx + '" data-imgname="' + imgName + '">' +
             '</div>' +
             '<div class="card-info">' +
                 '<div class="theme-name">' + t.nombre.replace(/\(nombre igual\)/gi, "").replace(/pkg/gi, "") + '</div>' +
@@ -410,7 +399,7 @@ function crearHTMLTarjeta(t, destacado) {
 function render() {
     grid.innerHTML = '';
 
-    // Destacados en inicio
+    // Destacados en inicio (sin cambios)
     if (!esModoAleatorio && currentPage === 0 && currentGenre === '' && searchInput.value === '') {
         var pool = [];
         for(var a=0; a<allThemes.length; a++) if(allThemes[a].genero === 'AnimugenZ') pool.push(allThemes[a]);
@@ -431,7 +420,7 @@ function render() {
     dibujarPaginacion();
 
     // Inicializar lazy loading después de añadir elementos
-    if (typeof container === 'undefined' || !container) {
+    if (!container) {
         container = document.getElementById('themeGrid');
         attachScrollListener();
     }
@@ -465,7 +454,7 @@ function dibujarPaginacion() {
 }
 
 // ============================================================
-// 6. LAZY LOADING (inspirado en referencia 1 y 2)
+// 6. LAZY LOADING (exactamente como en referencia 2)
 // ============================================================
 function attachScrollListener() {
     if (!container) container = document.getElementById('themeGrid');
@@ -473,7 +462,6 @@ function attachScrollListener() {
         if (scrollTimer) clearTimeout(scrollTimer);
         scrollTimer = setTimeout(checkVisibility, isPS3 ? 50 : 10);
     });
-    // También en scroll de ventana por si acaso
     window.addEventListener('scroll', function() {
         if (scrollTimer) clearTimeout(scrollTimer);
         scrollTimer = setTimeout(checkVisibility, isPS3 ? 50 : 10);
@@ -484,7 +472,7 @@ function checkVisibility() {
     var images = grid.getElementsByTagName('img');
     var windowHeight = window.innerHeight;
     var scrollY = window.pageYOffset || document.documentElement.scrollTop;
-    var buffer = isPS3 ? 200 : 500;
+    var buffer = isPS3 ? 200 : 500; // Margen de carga
 
     for (var i = 0; i < images.length; i++) {
         var img = images[i];
@@ -537,15 +525,13 @@ function loadImage(img) {
     var src = img.dataset.src;
     if (!src) return;
 
-    // Función para intentar carpetas alternativas en caso de error
+    // Función para intentar carpetas alternativas en caso de error (como tu función proximaCarpeta)
     var currentIdx = parseInt(img.dataset.folderIndex) || 0;
     var imgName = img.dataset.imgname;
 
     var tryLoad = function(index) {
         if (index >= PREVIEW_FOLDERS.length) {
-            // No más carpetas, mostrar placeholder
-            img.src = G_EMPTY_GIF;
-            img.style.opacity = '0.3';
+            // No más carpetas, mostrar placeholder (el GIF ya está)
             img.removeAttribute('data-loading');
             img.removeAttribute('data-src');
             img.setAttribute('data-failed', 'true');
@@ -555,7 +541,6 @@ function loadImage(img) {
         var tempImg = new Image();
         tempImg.onload = function() {
             img.src = trySrc;
-            img.style.opacity = '1';
             img.setAttribute('data-loaded', 'true');
             img.removeAttribute('data-loading');
             img.removeAttribute('data-src');
@@ -569,9 +554,9 @@ function loadImage(img) {
     tryLoad(currentIdx);
 }
 
-// Sobrescribir la función de error original con nuestro sistema
+// Mantener compatibilidad con la función original por si acaso
 window.proximaCarpeta = function(img, idx, name) {
-    // Ya no es necesario porque lo manejamos con loadImage, pero mantenemos compatibilidad
+    // Ya no es necesaria, pero la dejamos por si algún otro código la llama
     var nIdx = idx + 1;
     if(nIdx < PREVIEW_FOLDERS.length) {
         img.src = PREVIEW_FOLDERS[nIdx] + name;
@@ -580,11 +565,9 @@ window.proximaCarpeta = function(img, idx, name) {
 };
 
 // ============================================================
-// 7. INICIALIZACIÓN EXTRA (si es PS3)
+// 7. INICIALIZACIÓN (sin cambios)
 // ============================================================
 if (isPS3) {
-    // Reducimos el número de conexiones simultáneas
-    // (ya lo hacemos con la cola)
     console.log('Modo PS3 optimizado activado');
 }
 </script>
