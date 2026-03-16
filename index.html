@@ -54,23 +54,23 @@
         
         /* BOTÓN ALEATORIO (ESTILO VERSION PKG) */
 .btn-aleatorio {
-            display: inline-block;
-            background: #ff6b35;
-            color: #ffffff;
-            text-decoration: none;
-            font-weight: bold;
-            padding: 0 35px;           /* Más espacio a los lados */
-            border-radius: 10px;       /* Forma de rectángulo (menos circular) */
-            height: 60px;              /* Un poco más alto para letra grande */
-            line-height: 60px;         /* DEBE ser igual al height para centrar verticalmente */
-            font-size: 24px;           /* Letra mucho más grande */
-            text-align: center;        /* Centrado horizontal */
-            border: 2px solid #ff6b35;
-            vertical-align: middle;
-            cursor: pointer;
-            margin-left: 15px;
-            text-transform: uppercase;
-        }
+    display: inline-block;
+    background: #ff6b35;
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 0 35px;
+    border-radius: 10px;
+    height: 60px;
+    line-height: 60px; /* Centrado vertical perfecto */
+    font-size: 24px;   /* Letra más grande */
+    text-align: center;
+    border: 2px solid #ff6b35;
+    vertical-align: middle;
+    cursor: pointer;
+    margin-left: 15px;
+    text-transform: uppercase;
+}
 
         .sort-buttons {
             display: inline-block;
@@ -91,12 +91,13 @@
             vertical-align: middle;
             line-height: 46px;
         }
-        .credits-banner {
-            height: 50px;
-            vertical-align: middle;
-            display: inline-block;
-            margin-left: 120px;   
-        }
+       .credits-banner {
+    height: 38px;             /* Más chico */
+    vertical-align: middle;
+    display: inline-block;
+    margin-left: 300px;       /* Mucho más a la derecha para no chocar */
+    opacity: 0.9;
+}
         .stats {
             display: inline-block;
             vertical-align: middle;
@@ -121,7 +122,20 @@
         }
 
         .sort-btn.active { background: #ff6b35; color: #0b0f17; border-color: #ff6b35; }
-        .btn-genre-active { background: #0b1a2a; border-color: #ffb28c; color: #ffb28c; display: none; }
+       .btn-genre-active { 
+    background: #0b1a2a; 
+    border: 2px solid #ffb28c; 
+    color: #ffb28c; 
+    display: none; /* Se activa por JS */
+    height: 50px;
+    line-height: 46px;
+    padding: 0 20px;
+    border-radius: 40px;
+    font-weight: bold;
+    font-size: 16px;
+    vertical-align: middle;
+    margin-right: 20px; /* Espacio extra a la derecha */
+}
         .btn-adult { border-color: #ff3535; color: #ff9b9b; }
         .btn-adult.active { background: #ff3535; color: white; }
 
