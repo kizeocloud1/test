@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>PS3 THM KZ</title>
     <style>
-        /* Estilos base para PS3 - Optimizados para NetFront */
+        /* ===== ESTILOS ORIGINALES (sin cambios) ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
         body { background: #0b0f17; color: #e0e5f0; font-family: Arial, sans-serif; line-height: 1.2; padding: 20px 0; text-align: center; }
         
@@ -16,7 +16,6 @@
         .social-container { float: right; background: #0a1a2a; padding: 10px 30px; border-radius: 60px; border: 3px solid #ff6b35; margin-top: 15px; }
         .social-icon { width: 62px; height: 62px; margin: 0 7px; vertical-align: middle; }
 
-        /* ===== TOOLBAR CORREGIDO ===== */
         .toolbar {
             display: table;
             width: 100%;
@@ -115,7 +114,6 @@
             border: 2px solid #ff6b35;
             vertical-align: middle;
         }
-        /* ===== FIN CORRECCIÓN ===== */
 
         .sort-btn.active { background: #ff6b35; color: #0b0f17; border-color: #ff6b35; }
         .btn-genre-active { background: #0b1a2a; border-color: #ffb28c; color: #ffb28c; display: none; }
@@ -154,7 +152,7 @@
         </div>
     </div>
 
-    <!-- TOOLBAR CORREGIDO -->
+    <!-- TOOLBAR -->
     <div class="toolbar">
         <div class="toolbar-left">
             <div class="search-wrapper">
@@ -189,11 +187,14 @@
 
 <script>
 // ============================================================
-// 1. DETECCIÓN DE PS3 Y CONSTANTES (basado en referencias)
+// 1. DETECCIÓN DE PS3 Y CONSTANTES
 // ============================================================
 var isPS3 = /PS3|PlayStation 3|NetFront/i.test(navigator.userAgent);
 var G_EMPTY_GIF = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
-var JSON_URL = 'temas_ps3_conlinks.json';
+
+// >>> NUEVA URL DEL JSON EN CLOUDFLARE (actualizada) <<<
+var JSON_URL = 'https://empty-base-9162.kizeocloud.workers.dev/temas_ps3_conlinks.json';
+
 var PAGE_SIZE = 12;
 var PALABRAS_ADULTO = ['adult', '18+', 'girls/adult', 'sexy', 'ecchi', 'hentai', 'babes', 'harem', 'j-idols', 'j-idol', 'people','Girl','Girls'];
 var PREVIEW_FOLDERS = [
@@ -216,11 +217,12 @@ var mostrarContenidoAdulto = false;
 var esModoAleatorio = false;
 var searchTimer = null;
 
-// Para lazy loading (como en referencia 2)
-var imageQueue = [];          // Cola de imágenes (solo PS3)
+// Para lazy loading
+var imageQueue = [];
 var isProcessingQueue = false;
 var scrollTimer = null;
-var container = null;          // El div grid
+var gcTimer = null;
+var lastScrollY = 0;
 
 // Elementos DOM
 var grid = document.getElementById('themeGrid');
@@ -231,13 +233,12 @@ var adultBtn = document.getElementById('adultBtn');
 var genreActiveBtn = document.getElementById('genreActiveBtn');
 
 // ============================================================
-// 3. CARGA DEL JSON (con caché, como referencia 1)
+// 3. CARGA DEL JSON (con caché)
 // ============================================================
 function cargarJSON() {
     var data = null;
     var now = new Date().getTime();
 
-    // Intentar recuperar de localStorage
     if (typeof localStorage !== 'undefined') {
         try {
             var cached = localStorage.getItem(CACHE_KEY);
@@ -260,7 +261,6 @@ function cargarJSON() {
                 if (xhr.status === 200 || xhr.status === 0) {
                     try {
                         var jsonData = JSON.parse(xhr.responseText);
-                        // Guardar en caché
                         if (typeof localStorage !== 'undefined') {
                             try {
                                 localStorage.setItem(CACHE_KEY, JSON.stringify({
@@ -298,7 +298,7 @@ function procesarDatos(data) {
 cargarJSON();
 
 // ============================================================
-// 4. FILTROS Y BÚSQUEDA (sin cambios, solo funciones)
+// 4. FILTROS Y BÚSQUEDA (sin cambios)
 // ============================================================
 window.buscarConRetraso = function() {
     clearTimeout(searchTimer);
@@ -363,14 +363,13 @@ window.volverInicio = function() {
 
 window.modoAleatorio = function() {
     esModoAleatorio = true;
-    // Mezclar aleatoriamente
     filteredThemes = filteredThemes.slice().sort(function() { return 0.5 - Math.random(); });
     currentPage = 0;
     render();
 };
 
 // ============================================================
-// 5. RENDERIZADO CON LAZY LOADING (inspirado en referencia 2)
+// 5. RENDERIZADO CON LAZY LOADING
 // ============================================================
 function limpiarParaJS(str) {
     return encodeURIComponent(str).replace(/'/g, "%27");
@@ -383,10 +382,9 @@ function crearHTMLTarjeta(t, destacado) {
     var generoEscapado = t.genero.replace(/'/g, "\\'");
     var idUnico = 'img_' + t.nombre.replace(/[^a-zA-Z0-9]/g, '_') + '_' + Math.random().toString(36).substr(2, 8);
 
-    // Usamos src vacío y data-src con la URL real (como referencia 2)
     return '<div class="theme-card"' + estiloExtra + ' data-title="' + t.nombre + '">' +
             '<div class="preview">' +
-                '<img id="' + idUnico + '" src="' + G_EMPTY_GIF + '" data-src="' + folder + imgName + '" data-folder-index="' + t.preview_idx + '" data-imgname="' + imgName + '">' +
+                '<img id="' + idUnico + '" src="' + G_EMPTY_GIF + '" data-src="' + folder + imgName + '" data-folder-index="' + t.preview_idx + '" data-imgname="' + imgName + '" onerror="proximaCarpeta(this,' + t.preview_idx + ',\'' + imgName + '\')">' +
             '</div>' +
             '<div class="card-info">' +
                 '<div class="theme-name">' + t.nombre.replace(/\(nombre igual\)/gi, "").replace(/pkg/gi, "") + '</div>' +
@@ -399,7 +397,7 @@ function crearHTMLTarjeta(t, destacado) {
 function render() {
     grid.innerHTML = '';
 
-    // Destacados en inicio (sin cambios)
+    // Destacados en inicio
     if (!esModoAleatorio && currentPage === 0 && currentGenre === '' && searchInput.value === '') {
         var pool = [];
         for(var a=0; a<allThemes.length; a++) if(allThemes[a].genero === 'AnimugenZ') pool.push(allThemes[a]);
@@ -419,12 +417,8 @@ function render() {
     statsDiv.innerHTML = filteredThemes.length + ' Temas';
     dibujarPaginacion();
 
-    // Inicializar lazy loading después de añadir elementos
-    if (!container) {
-        container = document.getElementById('themeGrid');
-        attachScrollListener();
-    }
-    // Primera comprobación de visibilidad
+    if (!grid) grid = document.getElementById('themeGrid');
+    attachScrollListener();
     setTimeout(checkVisibility, 100);
 }
 
@@ -454,10 +448,10 @@ function dibujarPaginacion() {
 }
 
 // ============================================================
-// 6. LAZY LOADING (exactamente como en referencia 2)
+// 6. LAZY LOADING (colas y visibilidad)
 // ============================================================
 function attachScrollListener() {
-    if (!container) container = document.getElementById('themeGrid');
+    var container = grid;
     container.addEventListener('scroll', function() {
         if (scrollTimer) clearTimeout(scrollTimer);
         scrollTimer = setTimeout(checkVisibility, isPS3 ? 50 : 10);
@@ -472,11 +466,11 @@ function checkVisibility() {
     var images = grid.getElementsByTagName('img');
     var windowHeight = window.innerHeight;
     var scrollY = window.pageYOffset || document.documentElement.scrollTop;
-    var buffer = isPS3 ? 200 : 500; // Margen de carga
+    var buffer = isPS3 ? 200 : 500;
 
     for (var i = 0; i < images.length; i++) {
         var img = images[i];
-        if (!img.dataset || !img.dataset.src) continue; // ya cargada o sin data-src
+        if (!img.dataset || !img.dataset.src) continue;
         if (img.getAttribute('data-loading') === 'true' || img.getAttribute('data-loaded') === 'true') continue;
 
         var rect = img.getBoundingClientRect();
@@ -484,13 +478,11 @@ function checkVisibility() {
 
         if (yPos >= scrollY - buffer && yPos <= scrollY + windowHeight + buffer) {
             if (isPS3) {
-                // En PS3 encolamos para no saturar
                 img.setAttribute('data-loading', 'true');
                 imageQueue.push(img);
                 if (!isProcessingQueue) processImageQueue();
             } else {
-                // En PC cargamos directamente
-                loadImage(img);
+                cargarImagen(img);
             }
         }
     }
@@ -510,10 +502,8 @@ function processImageQueue() {
     var buffer = 200;
     var yPos = rect.top + scrollY;
 
-    // Verificar que sigue siendo visible
     if (yPos >= scrollY - buffer && yPos <= scrollY + windowHeight + buffer) {
-        loadImage(img);
-        // Pequeña pausa entre cargas en PS3
+        cargarImagen(img);
         setTimeout(processImageQueue, 50);
     } else {
         img.removeAttribute('data-loading');
@@ -521,55 +511,72 @@ function processImageQueue() {
     }
 }
 
-function loadImage(img) {
+function cargarImagen(img) {
     var src = img.dataset.src;
     if (!src) return;
 
-    // Función para intentar carpetas alternativas en caso de error (como tu función proximaCarpeta)
-    var currentIdx = parseInt(img.dataset.folderIndex) || 0;
-    var imgName = img.dataset.imgname;
-
-    var tryLoad = function(index) {
-        if (index >= PREVIEW_FOLDERS.length) {
-            // No más carpetas, mostrar placeholder (el GIF ya está)
-            img.removeAttribute('data-loading');
-            img.removeAttribute('data-src');
-            img.setAttribute('data-failed', 'true');
-            return;
-        }
-        var trySrc = PREVIEW_FOLDERS[index] + imgName;
-        var tempImg = new Image();
-        tempImg.onload = function() {
-            img.src = trySrc;
-            img.setAttribute('data-loaded', 'true');
-            img.removeAttribute('data-loading');
-            img.removeAttribute('data-src');
-        };
-        tempImg.onerror = function() {
-            tryLoad(index + 1);
-        };
-        tempImg.src = trySrc;
-    };
-
-    tryLoad(currentIdx);
+    img.setAttribute('data-original', src);
+    img.src = src;
+    img.setAttribute('data-loaded', 'true');
+    img.removeAttribute('data-loading');
+    img.removeAttribute('data-src');
 }
 
-// Mantener compatibilidad con la función original por si acaso
+// Función de fallback original (probada en PS3)
 window.proximaCarpeta = function(img, idx, name) {
-    // Ya no es necesaria, pero la dejamos por si algún otro código la llama
     var nIdx = idx + 1;
-    if(nIdx < PREVIEW_FOLDERS.length) {
+    if (nIdx < PREVIEW_FOLDERS.length) {
         img.src = PREVIEW_FOLDERS[nIdx] + name;
-        img.onerror = function() { proximaCarpeta(img, nIdx, name); };
-    } else { img.style.display = 'none'; }
+        img.setAttribute('data-folder-index', nIdx);
+    } else {
+        img.style.display = 'none';
+    }
 };
 
 // ============================================================
-// 7. INICIALIZACIÓN (sin cambios)
+// 7. RECOLECTOR DE BASURA (solo PS3)
 // ============================================================
-if (isPS3) {
-    console.log('Modo PS3 optimizado activado');
+function startGarbageCollector() {
+    if (!isPS3) return;
+    if (gcTimer) clearTimeout(gcTimer);
+    gcTimer = setTimeout(garbageCollect, 2000);
 }
+
+function garbageCollect() {
+    var images = grid.getElementsByTagName('img');
+    var windowHeight = window.innerHeight;
+    var scrollY = window.pageYOffset || document.documentElement.scrollTop;
+    var buffer = 500;
+
+    for (var i = 0; i < images.length; i++) {
+        var img = images[i];
+        if (!img.src || img.src === G_EMPTY_GIF) continue;
+        if (img.getAttribute('data-loaded') !== 'true') continue;
+
+        var rect = img.getBoundingClientRect();
+        var yPos = rect.top + scrollY;
+
+        if (yPos < scrollY - buffer || yPos > scrollY + windowHeight + buffer) {
+            var original = img.getAttribute('data-original');
+            if (original) {
+                img.setAttribute('data-src', original);
+                img.removeAttribute('data-original');
+            }
+            img.src = G_EMPTY_GIF;
+            img.removeAttribute('data-loaded');
+        }
+    }
+    gcTimer = setTimeout(garbageCollect, 2000);
+}
+
+if (isPS3) {
+    startGarbageCollector();
+}
+
+// ============================================================
+// 8. INICIALIZACIÓN
+// ============================================================
+// (Todo se lanza desde cargarJSON)
 </script>
 </body>
 </html>
