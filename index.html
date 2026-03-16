@@ -244,67 +244,45 @@ function escapeHTML(str) {
 }
 
 function cargarJSON() {
-    var data = null;
     var now = new Date().getTime();
-
-    // Intentar cargar desde caché
-    if (typeof localStorage !== 'undefined') {
-        try {
-            var cached = localStorage.getItem(CACHE_KEY);
-            if (cached) {
-                var obj = JSON.parse(cached);
-                if (now - obj.timestamp < CACHE_TIME) {
-                    data = obj.data;
-                }
+    var xhr = new XMLHttpRequest();
+    xhr.open('GET', JSON_URL + '?v=' + now, true);
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === 4) {
+            // Mostrar información básica de la respuesta
+            var info = 'Status: ' + xhr.status + '\n';
+            info += 'Response Text Length: ' + (xhr.responseText ? xhr.responseText.length : 'N/A') + '\n';
+            info += 'Response Type: ' + (typeof xhr.responseText) + '\n';
+            if (xhr.responseText) {
+                info += 'Primeros 100 caracteres: ' + xhr.responseText.substring(0, 100);
+            } else {
+                info += 'responseText está vacío o es nulo.';
             }
-        } catch(e) {}
-    }
+            grid.innerHTML = '<pre style="color:#fff; background:#000; padding:20px;">' + escapeHTML(info) + '</pre>';
 
-    if (data) {
-        procesarDatos(data);
-    } else {
-        var xhr = new XMLHttpRequest();
-        xhr.open('GET', JSON_URL + '?v=' + now, true);
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200 || xhr.status === 0) {
-                    var responseText = xhr.responseText;
-
-                    // --- DIAGNÓSTICO: Mostrar los primeros caracteres en la página ---
-                    var preview = responseText.length > 200 ? responseText.substring(0, 200) + '...' : responseText;
-                    grid.innerHTML = '<div style="color:orange; text-align:left; padding:20px;">' +
-                                     '<b>Recibidos ' + responseText.length + ' caracteres.</b><br>' +
-                                     '<b>Primeros caracteres:</b><br><pre style="background:#111; color:#0f0; padding:10px;">' + escapeHTML(preview) + '</pre>' +
-                                     '<i>Procesando...</i></div>';
-
-                    try {
-                        var jsonData = JSON.parse(responseText);
-                        // Si llega hasta aquí, el JSON es válido
-                        if (typeof localStorage !== 'undefined') {
-                            try {
-                                localStorage.setItem(CACHE_KEY, JSON.stringify({
-                                    timestamp: now,
-                                    data: jsonData
-                                }));
-                            } catch(e) {}
-                        }
-                        procesarDatos(jsonData);
-                    } catch(e) {
-                        // Mostrar el error detallado
-                        grid.innerHTML = '<div style="color:red; text-align:left; padding:20px;">' +
-                                         '<b>ERROR AL PARSEAR JSON:</b><br>' +
-                                         e.message + '<br><br>' +
-                                         '<b>Primeros 200 caracteres recibidos:</b><br>' +
-                                         '<pre style="background:#111; color:#f66; padding:10px;">' + escapeHTML(preview) + '</pre>' +
-                                         '</div>';
+            // Intentar parsear si hay contenido
+            if (xhr.status === 200 && xhr.responseText) {
+                try {
+                    var jsonData = JSON.parse(xhr.responseText);
+                    // Si funciona, procesar datos
+                    if (typeof localStorage !== 'undefined') {
+                        try {
+                            localStorage.setItem(CACHE_KEY, JSON.stringify({
+                                timestamp: now,
+                                data: jsonData
+                            }));
+                        } catch(e) {}
                     }
-                } else {
-                    grid.innerHTML = '<div style="color:red">Error HTTP al cargar JSON: ' + xhr.status + '</div>';
+                    procesarDatos(jsonData);
+                } catch(e) {
+                    grid.innerHTML += '<br><span style="color:red">Error parse: ' + e.message + '</span>';
                 }
+            } else {
+                grid.innerHTML += '<br><span style="color:red">No se recibió contenido válido.</span>';
             }
-        };
-        xhr.send();
-    }
+        }
+    };
+    xhr.send();
 }
 
 function procesarDatos(data) {
