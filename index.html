@@ -2,388 +2,216 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>PS3 THM KZ</title>
+    <title>PS3 THM KZ - Optimized</title>
+    <script>
+        // Detección robusta de PS3 para optimización de rendimiento
+        var isPS3 = /PS3|PlayStation 3|NetFront/i.test(navigator.userAgent) || window.location.search.indexOf("mode=ps3") > -1;
+        if (isPS3) document.documentElement.className += " is-ps3";
+    </script>
     <style>
-        /* Estilos base para PS3 - Optimizados para NetFront */
+        /* Estilos base optimizados */
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
         body { background: #0b0f17; color: #e0e5f0; font-family: Arial, sans-serif; line-height: 1.2; padding: 20px 0; text-align: center; }
         
         .main-container { width: 1750px; margin: 0 auto; text-align: left; } 
-
         .header { overflow: hidden; margin-bottom: 25px; border-bottom: 5px solid #ff6b35; padding-bottom: 20px; }
         .logo-img { height: 115px; float: left; cursor: pointer; }
 
         .social-container { float: right; background: #0a1a2a; padding: 10px 30px; border-radius: 60px; border: 3px solid #ff6b35; margin-top: 15px; }
         .social-icon { width: 62px; height: 62px; margin: 0 7px; vertical-align: middle; }
 
-        /* ===== TOOLBAR CORREGIDO ===== */
-        .toolbar {
-            display: table;
-            width: 100%;
-            background: #0a1a2a;
-            padding: 15px 25px;
-            border-radius: 60px;
-            margin-bottom: 25px;
-            border-left: 6px solid #ff6b35;
-            height: 86px;
-            box-sizing: border-box;
-        }
-        .toolbar-left, .toolbar-right {
-            display: table-cell;
-            vertical-align: middle;
-        }
-        .toolbar-right {
-            text-align: right;
-        }
-        .search-wrapper {
-            display: inline-block;
-            vertical-align: middle;
-            margin-right: 10px;
-        }
-        .search-wrapper input {
-            width: 310px;
-            height: 50px;
-            padding: 0 22px;
-            background: #0b1a2a;
-            border: 2px solid #1e3b4f;
-            border-radius: 50px;
-            color: white;
-            font-size: 16px;
-            vertical-align: middle;
-        }
-        .dice-btn {
-            display: inline-block;
-            width: 50px;
-            height: 50px;
-            margin-left: 10px;
-            background: #1e3b4f;
-            border: 3px solid #ff6b35;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 44px;
-            cursor: pointer;
-            vertical-align: middle;
-        }
-        .dice-img {
-            width: 28px;
-            vertical-align: middle;
-        }
-        .sort-buttons {
-            display: inline-block;
-            vertical-align: middle;
-            margin-right: 10px;
-        }
-        .sort-btn {
-            height: 50px;
-            background: #1e3b4f;
-            border: 2px solid #1e3b4f;
-            color: #c9d9e8;
-            padding: 0 22px;
-            border-radius: 40px;
-            font-weight: bold;
-            cursor: pointer;
-            margin-right: 7px;
-            font-size: 15px;
-            vertical-align: middle;
-            line-height: 46px;
-        }
-        .credits-banner {
-            height: 50px;
-            vertical-align: middle;
-            display: inline-block;
-            margin-left: 200px;   
-        }
-        .stats {
-            display: inline-block;
-            vertical-align: middle;
-            color: #9ab8d9;
-            font-weight: bold;
-            font-size: 18px;
-            margin-right: 20px;
-        }
-        .btn-pkg {
-            display: inline-block;
-            background: #ff6b35;
-            color: #ffffff;
-            text-decoration: none;
-            font-weight: bold;
-            padding: 0 25px;
-            border-radius: 40px;
-            height: 50px;
-            line-height: 50px;
-            font-size: 16px;
-            border: 2px solid #ff6b35;
-            vertical-align: middle;
-        }
-        /* ===== FIN CORRECCIÓN ===== */
+        .toolbar { background: #162130; padding: 20px; border-radius: 15px; margin-bottom: 30px; overflow: hidden; }
+        .search-box { width: 600px; padding: 15px 25px; background: #0a1a2a; border: 3px solid #30475e; color: #fff; border-radius: 50px; font-size: 24px; float: left; }
+        
+        .nav-buttons { float: right; }
+        .btn { background: #ff6b35; color: #fff; border: none; padding: 15px 35px; border-radius: 10px; cursor: pointer; font-weight: bold; font-size: 22px; margin-left: 15px; }
 
-        .sort-btn.active { background: #ff6b35; color: #0b0f17; border-color: #ff6b35; }
-        .btn-genre-active { background: #0b1a2a; border-color: #ffb28c; color: #ffb28c; display: none; }
-        .btn-adult { border-color: #ff3535; color: #ff9b9b; }
-        .btn-adult.active { background: #ff3535; color: white; }
+        /* Grid optimizado para evitar saltos de línea incorrectos */
+        .themes-grid { display: block; text-align: center; min-height: 600px; }
+        .theme-card { 
+            display: inline-block; width: 320px; margin: 15px; background: #1a2634; 
+            border-radius: 15px; overflow: hidden; vertical-align: top;
+            border: 2px solid #30475e; text-align: left;
+        }
 
-        .grid { text-align: center; clear: both; min-height: 600px; }
+        /* Altura fija para la imagen para evitar reflows al cargar */
+        .preview-container { width: 100%; height: 180px; background: #0a1a2a; overflow: hidden; }
+        .theme-img { width: 100%; height: 180px; object-fit: cover; display: block; }
 
-        .theme-card { width: 350px; background: #0e1727; border-radius: 20px; overflow: hidden; border: 2px solid #1f3a4c; display: inline-block; vertical-align: top; margin: 12px; text-align: left; }
-        .preview { width: 100%; background: #000; text-align: center; border-bottom: 3px solid #ff6b35; height: 225px; line-height: 225px; overflow: hidden; }
-        .preview img { max-width: 100%; max-height: 100%; vertical-align: middle; }
+        .theme-info { padding: 15px; }
+        .theme-title { font-size: 20px; font-weight: bold; color: #ff6b35; margin-bottom: 8px; height: 48px; overflow: hidden; }
+        .theme-meta { font-size: 16px; color: #a0acbd; }
 
-        .card-info { padding: 20px; }
-        .theme-name { font-weight: bold; font-size: 19px; color: #fff; height: 45px; overflow: hidden; margin-bottom: 8px; }
-        .theme-genre { background: #1e3b4f; padding: 6px 12px; border-radius: 10px; font-size: 14px; font-weight: bold; color: #ffb28c; margin-bottom: 15px; display: inline-block; border: 1px solid #ff6b35; cursor: pointer; }
-        .download-btn { background: #ff6b35; color: #0b0f17; text-decoration: none; font-weight: bold; padding: 12px; border-radius: 40px; text-align: center; display: block; font-size: 15px; }
+        .download-btn { 
+            display: block; width: 100%; background: #22c55e; color: #fff; 
+            text-align: center; padding: 15px; text-decoration: none; 
+            font-weight: bold; font-size: 20px; border-top: 2px solid #30475e;
+        }
 
-        .pagination-container { text-align: center; margin: 40px 0; }
-        .page-box { display: inline-block; width: 50px; height: 50px; line-height: 46px; background: #1e3b4f; border: 2px solid #1e3b4f; color: #fff; margin: 0 4px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 16px; text-decoration: none; vertical-align: middle; }
-        .page-box.active { background: #ff6b35; border-color: #ff6b35; color: #0b0f17; }
-        .page-box:hover { border-color: #ff6b35; }
+        .pagination { margin-top: 40px; clear: both; }
+        .page-box { 
+            display: inline-block; padding: 12px 25px; background: #162130; 
+            color: #fff; margin: 0 8px; border-radius: 8px; cursor: pointer; 
+            font-size: 20px; border: 2px solid #30475e;
+        }
+        .page-box.active { background: #ff6b35; border-color: #ff6b35; }
 
-        .footer { margin-top: 50px; border-top: 3px solid #ff6b3540; padding: 25px 0; color: #b0c8e0; font-size: 16px; }
-        .clearfix::after { content: ""; display: table; clear: both; }
+        /* Ajustes específicos para PS3 */
+        .is-ps3 .theme-card { border-width: 1px; box-shadow: none !important; }
+        .is-ps3 .theme-img { image-rendering: -webkit-optimize-contrast; }
     </style>
 </head>
 <body>
 
 <div class="main-container">
-    <div class="header clearfix">
-        <img src="recursos/titulo.png" alt="Logo" class="logo-img" onclick="volverInicio()">
+    <div class="header">
+        <img src="logo.png" class="logo-img" onclick="volverInicio()">
         <div class="social-container">
-            <a href="https://www.youtube.com/@kizeo0/videos"><img src="recursos/yt.png" class="social-icon"></a>
-            <a href="https://github.com/kizeo0"><img src="recursos/git.png" class="social-icon"></a>
-            <a href="https://x.com/KiZeo0"><img src="recursos/x.png" class="social-icon"></a>
+            <img src="fb.png" class="social-icon">
+            <img src="tw.png" class="social-icon">
+            <img src="yt.png" class="social-icon">
         </div>
     </div>
 
-    <!-- TOOLBAR CORREGIDO -->
     <div class="toolbar">
-        <div class="toolbar-left">
-            <div class="search-wrapper">
-                <input type="text" id="searchInput" placeholder="Buscar..." onkeyup="buscarConRetraso()">
-                <div class="dice-btn" onclick="modoAleatorio()">
-                    <img src="recursos/dado.png" class="dice-img">
-                </div>
-            </div>
-            <div class="sort-buttons">
-                <button class="sort-btn btn-adult" id="adultBtn" onclick="toggleAdulto()">+18 OFF</button>
-                <button class="sort-btn btn-genre-active" id="genreActiveBtn" onclick="volverInicio()"></button>
-            </div>
-            <img src="recursos/credits.png" class="credits-banner">
-        </div>
-        <div class="toolbar-right">
-            <span class="stats" id="stats">...</span>
-            <a href="https://github.com/kizeo0/PS3-THM-KZ/releases/download/PKG/PS3.THM.KZ.pkg" class="btn-pkg">VERSION PKG</a>
+        <input type="text" id="searchInput" class="search-box" placeholder="Buscar temas..." oninput="buscar()">
+        <div class="nav-buttons">
+            <button class="btn" onclick="mostrarAleatorio()">Aleatorio</button>
+            <button class="btn" style="background:#30475e" onclick="volverInicio()">Inicio</button>
         </div>
     </div>
 
-    <div id="themeGrid" class="grid">
-        <div style="padding:40px; color:#ffb28c;">Cargando base de datos...</div>
-    </div>
+    <div id="themesGrid" class="themes-grid">
+        </div>
 
-    <div class="pagination-container" id="pagination"></div>
-
-    <div class="footer clearfix">
-        <span style="float:left">© PS3 THM KZ</span>
-        <span style="float:right">Youtube KiZeo</span>
-    </div>
+    <div id="pagination" class="pagination"></div>
 </div>
 
 <script>
-    var JSON_URL = 'temas_ps3_conlinks.json';
-    var PAGE_SIZE = 12; 
-    var PALABRAS_ADULTO = ['adult', '18+', 'girls/adult', 'sexy', 'ecchi', 'hentai', 'babes', 'harem', 'j-idols', 'j-idol', 'people','Girl','Girls'];
-    
-    var PREVIEW_FOLDERS = [
-        'previews1/', 'previews2/', 
-        'https://raw.githubusercontent.com/kizeocloud1/ps3cloud/main/previews3/',
-        'https://raw.githubusercontent.com/kizeocloud1/ps3cloud1/main/previews4/',
-        'https://raw.githubusercontent.com/kizeocloud1/ps3cloud2/main/previews5/'
-    ];
-
+    // Variables globales
     var allThemes = [];
     var filteredThemes = [];
     var currentPage = 0;
-    var currentGenre = '';
-    var mostrarContenidoAdulto = false;
-    var esModoAleatorio = false; 
-    var searchTimer = null; 
+    var itemsPerPage = 12;
+    var G_EMPTY_GIF = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+    var PREVIEW_FOLDERS = ["previews1/", "previews2/", "previews3/"];
 
-    var grid = document.getElementById('themeGrid');
-    var statsDiv = document.getElementById('stats');
-    var paginationDiv = document.getElementById('pagination');
+    // Elementos del DOM cacheados para velocidad
+    var gridEl = document.getElementById('themesGrid');
+    var paginationEl = document.getElementById('pagination');
     var searchInput = document.getElementById('searchInput');
-    var adultBtn = document.getElementById('adultBtn');
-    var genreActiveBtn = document.getElementById('genreActiveBtn');
 
-    function cargarJSON() {
+    // Carga de JSON mediante XMLHttpRequest (Optimizado para PS3)
+    function loadData() {
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', JSON_URL + '?v=' + new Date().getTime(), true);
+        xhr.open('GET', 'themes.json', true);
         xhr.onreadystatechange = function() {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200 || xhr.status === 0) {
-                    try {
-                        var data = JSON.parse(xhr.responseText);
-                        allThemes = [];
-                        for (var i = 0; i < data.length; i++) {
-                            var item = data[i];
-                            allThemes.push({
-                                archivo: item.archivo,
-                                descarga: item.descarga,
-                                genero: item.genero || 'Otro',
-                                nombre: item.archivo.replace(/\.p3t$/i, ''),
-                                preview_idx: item.preview_idx || 0
-                            });
-                        }
-                        aplicarFiltros();
-                    } catch(e) { grid.innerHTML = '<div style="color:red">Error al procesar JSON.</div>'; }
-                }
+            if (xhr.readyState === 4 && xhr.status === 200) {
+                allThemes = JSON.parse(xhr.responseText);
+                filteredThemes = allThemes;
+                render();
             }
         };
         xhr.send();
     }
 
-    cargarJSON();
-
-    window.buscarConRetraso = function() {
-        clearTimeout(searchTimer);
-        searchTimer = setTimeout(function() {
-            currentGenre = '';
-            currentPage = 0;
-            esModoAleatorio = false; 
-            aplicarFiltros();
-        }, 600);
-    };
-
-    window.toggleAdulto = function() {
-        mostrarContenidoAdulto = !mostrarContenidoAdulto;
-        adultBtn.innerHTML = mostrarContenidoAdulto ? "+18 ON" : "+18 OFF";
-        adultBtn.className = mostrarContenidoAdulto ? "sort-btn btn-adult active" : "sort-btn btn-adult";
-        currentPage = 0;
-        aplicarFiltros();
-    };
-
-    function aplicarFiltros() {
-        var query = searchInput.value.toLowerCase();
-        filteredThemes = [];
-        
-        if(currentGenre !== '') {
-            genreActiveBtn.style.display = 'inline-block';
-            genreActiveBtn.innerHTML = currentGenre + " X";
-        } else {
-            genreActiveBtn.style.display = 'none';
-        }
-
-        for (var i = 0; i < allThemes.length; i++) {
-            var t = allThemes[i];
-            var genNormalizado = t.genero.toLowerCase();
-            var isAdult = false;
-            for(var j=0; j<PALABRAS_ADULTO.length; j++) {
-                if(genNormalizado.indexOf(PALABRAS_ADULTO[j].toLowerCase()) !== -1) { isAdult = true; break; }
-            }
-            if(!mostrarContenidoAdulto && isAdult) continue;
-
-            if(t.nombre.toLowerCase().indexOf(query) !== -1 && (currentGenre === '' || genNormalizado === currentGenre.toLowerCase())) {
-                filteredThemes.push(t);
-            }
-        }
-        render();
-    }
-
-    function limpiarParaJS(str) {
-        return encodeURIComponent(str).replace(/'/g, "%27");
-    }
-
-    function crearHTMLTarjeta(t, destacado) {
-        var imgName = limpiarParaJS(t.nombre + '.png');
-        var folder = PREVIEW_FOLDERS[t.preview_idx] || PREVIEW_FOLDERS[0];
-        var estiloExtra = destacado ? ' style="border-color: #ffb28c; box-shadow: 0 0 15px rgba(255,178,140,0.3);"' : '';
-        var generoEscapado = t.genero.replace(/'/g, "\\'");
-
-        return '<div class="theme-card"' + estiloExtra + '>' +
-                '<div class="preview"><img src="' + folder + imgName + '" onerror="proximaCarpeta(this,'+t.preview_idx+',\''+imgName+'\')"></div>' +
-                '<div class="card-info">' +
-                    '<div class="theme-name">' + t.nombre.replace(/\(nombre igual\)/gi, "").replace(/pkg/gi, "") + '</div>' +
-                    '<div class="theme-genre" onclick="filtrarPorGenero(\''+generoEscapado+'\')">' + t.genero + '</div>' +
-                    '<a href="' + t.descarga + '" class="download-btn">DESCARGAR</a>' +
-                '</div>' +
-            '</div>';
-    }
-
     function render() {
-        grid.innerHTML = '';
+        if (!gridEl) return;
         
-        if (!esModoAleatorio && currentPage === 0 && currentGenre === '' && searchInput.value === '') {
-            var pool = [];
-            for(var a=0; a<allThemes.length; a++) if(allThemes[a].genero === 'AnimugenZ') pool.push(allThemes[a]);
-            if(pool.length > 0) {
-                pool.sort(function() { return 0.5 - Math.random(); });
-                var dest = pool.slice(0, 2);
-                for(var d=0; d<dest.length; d++) grid.innerHTML += crearHTMLTarjeta(dest[d], true);
-            }
-        }
-
-        var start = currentPage * PAGE_SIZE;
-        var end = Math.min(start + PAGE_SIZE, filteredThemes.length);
-        for (var i = start; i < end; i++) grid.innerHTML += crearHTMLTarjeta(filteredThemes[i], false);
-
-        statsDiv.innerHTML = filteredThemes.length + ' Temas';
-        dibujarPaginacion();
-    }
-
-    function dibujarPaginacion() {
-        var totalPages = Math.ceil(filteredThemes.length / PAGE_SIZE);
-        paginationDiv.innerHTML = '';
-        if(totalPages <= 1) return;
-
-        var visibleButtons = 10;
-        var half = Math.floor(visibleButtons / 2);
-        var startPage = Math.max(0, currentPage - half);
-        var endPage = Math.min(totalPages - 1, startPage + visibleButtons - 1);
+        var start = currentPage * itemsPerPage;
+        var end = start + itemsPerPage;
+        var currentBatch = filteredThemes.slice(start, end);
         
-        if (endPage - startPage < visibleButtons - 1) {
-            startPage = Math.max(0, endPage - (visibleButtons - 1));
+        var htmlBuffer = ""; // Buffering de strings para evitar reflows
+        for (var i = 0; i < currentBatch.length; i++) {
+            var theme = currentBatch[i];
+            var safeName = theme.name.replace(/"/g, '&quot;');
+            
+            htmlBuffer += '<div class="theme-card">' +
+                '<div class="preview-container">' +
+                    '<img src="' + G_EMPTY_GIF + '" data-real-src="' + PREVIEW_FOLDERS[0] + theme.preview + '" ' +
+                    'class="theme-img" id="img_' + start + i + '" ' +
+                    'onerror="proximaCarpeta(this, 0, \'' + theme.preview + '\')">' +
+                '</div>' +
+                '<div class="theme-info">' +
+                    '<div class="theme-title">' + safeName + '</div>' +
+                    '<div class="theme-meta">Género: ' + (theme.genre || 'General') + '</div>' +
+                '</div>' +
+                '<a href="' + theme.url + '" class="download-btn">DESCARGAR .P3T</a>' +
+            '</div>';
         }
-
-        for (var p = startPage; p <= endPage; p++) {
-            var btn = document.createElement('button');
-            btn.className = (p === currentPage) ? 'page-box active' : 'page-box';
-            btn.innerHTML = (p + 1);
-            btn.onclick = (function(page) {
-                return function() { currentPage = page; render(); window.scrollTo(0, 300); };
-            })(p);
-            paginationDiv.appendChild(btn);
+        
+        gridEl.innerHTML = htmlBuffer;
+        
+        // Disparar la carga de imágenes reales después de inyectar el HTML
+        var imgs = gridEl.getElementsByTagName('img');
+        for (var j = 0; j < imgs.length; j++) {
+            var ds = imgs[j].getAttribute('data-real-src');
+            if (ds) imgs[j].src = ds;
         }
+        
+        renderPagination();
     }
 
     window.proximaCarpeta = function(img, idx, name) {
         var nIdx = idx + 1;
-        if(nIdx < PREVIEW_FOLDERS.length) {
-            img.src = PREVIEW_FOLDERS[nIdx] + name;
+        if (nIdx < PREVIEW_FOLDERS.length) {
             img.onerror = function() { proximaCarpeta(img, nIdx, name); };
-        } else { img.style.display = 'none'; }
+            img.src = PREVIEW_FOLDERS[nIdx] + name;
+        } else {
+            img.style.display = 'none';
+        }
     };
 
-    window.filtrarPorGenero = function(g) { 
-        currentGenre = g; 
-        searchInput.value = ''; 
-        currentPage = 0; 
-        esModoAleatorio = false; 
-        aplicarFiltros(); 
+    function renderPagination() {
+        var totalPages = Math.ceil(filteredThemes.length / itemsPerPage);
+        var pBuffer = "";
+        
+        for (var i = 0; i < totalPages; i++) {
+            var activeClass = (i === currentPage) ? 'active' : '';
+            pBuffer += '<div class="page-box ' + activeClass + '" onclick="cambiarPagina(' + i + ')">' + (i + 1) + '</div>';
+        }
+        paginationEl.innerHTML = pBuffer;
+    }
+
+    window.cambiarPagina = function(p) {
+        currentPage = p;
+        render();
+        window.scrollTo(0, 300);
     };
 
-    window.volverInicio = function() { 
-        searchInput.value = ''; 
-        currentGenre = ''; 
-        currentPage = 0; 
-        esModoAleatorio = false; 
-        aplicarFiltros(); 
-    };
-
-    window.modoAleatorio = function() {
-        esModoAleatorio = true; 
-        filteredThemes.sort(function() { return 0.5 - Math.random(); });
-        currentPage = 0; 
+    window.buscar = function() {
+        var q = searchInput.value.toLowerCase();
+        filteredThemes = allThemes.filter(function(t) {
+            return t.name.toLowerCase().indexOf(q) > -1;
+        });
+        currentPage = 0;
         render();
     };
+
+    window.mostrarAleatorio = function() {
+        filteredThemes = allThemes.slice().sort(function() { return 0.5 - Math.random(); });
+        currentPage = 0;
+        render();
+    };
+
+    window.volverInicio = function() {
+        searchInput.value = '';
+        filteredThemes = allThemes;
+        currentPage = 0;
+        render();
+    };
+
+    // Limpieza de memoria al salir (Optimización de Referencia 1)
+    window.addEventListener("unload", function() {
+        allThemes = null;
+        filteredThemes = null;
+        if (gridEl) gridEl.innerHTML = "";
+    });
+
+    // Inicio
+    loadData();
+
 </script>
 </body>
 </html>
