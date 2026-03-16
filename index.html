@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>PS3 THM KZ</title>
     <style>
-        /* ===== ESTILOS ORIGINALES (sin cambios) ===== */
+        /* ===== TUS ESTILOS ORIGINALES (sin cambios) ===== */
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
         body { background: #0b0f17; color: #e0e5f0; font-family: Arial, sans-serif; line-height: 1.2; padding: 20px 0; text-align: center; }
         
@@ -192,7 +192,7 @@
 var isPS3 = /PS3|PlayStation 3|NetFront/i.test(navigator.userAgent);
 var G_EMPTY_GIF = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 
-// >>> NUEVA URL DEL JSON EN CLOUDFLARE <<<
+// >>> NUEVA URL DEL JSON EN CLOUDFLARE (sin parámetros para simplificar) <<<
 var JSON_URL = 'https://empty-base-9162.kizeocloud.workers.dev/temas_ps3_conlinks.json';
 
 var PAGE_SIZE = 12;
@@ -233,7 +233,7 @@ var adultBtn = document.getElementById('adultBtn');
 var genreActiveBtn = document.getElementById('genreActiveBtn');
 
 // ============================================================
-// 3. CARGA DEL JSON (VERSIÓN MEJORADA CON DIAGNÓSTICO)
+// 3. CARGA DEL JSON (VERSIÓN ROBUSTA PARA PS3)
 // ============================================================
 function escapeHTML(str) {
     return str.replace(/&/g, '&amp;')
@@ -244,27 +244,52 @@ function escapeHTML(str) {
 }
 
 function cargarJSON() {
+    var data = null;
     var now = new Date().getTime();
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', JSON_URL + '?v=' + now, true);
-    xhr.onreadystatechange = function() {
-        if (xhr.readyState === 4) {
-            // Mostrar información básica de la respuesta
-            var info = 'Status: ' + xhr.status + '\n';
-            info += 'Response Text Length: ' + (xhr.responseText ? xhr.responseText.length : 'N/A') + '\n';
-            info += 'Response Type: ' + (typeof xhr.responseText) + '\n';
-            if (xhr.responseText) {
-                info += 'Primeros 100 caracteres: ' + xhr.responseText.substring(0, 100);
-            } else {
-                info += 'responseText está vacío o es nulo.';
-            }
-            grid.innerHTML = '<pre style="color:#fff; background:#000; padding:20px;">' + escapeHTML(info) + '</pre>';
 
-            // Intentar parsear si hay contenido
-            if (xhr.status === 200 && xhr.responseText) {
+    // Intentar cargar desde caché
+    if (typeof localStorage !== 'undefined') {
+        try {
+            var cached = localStorage.getItem(CACHE_KEY);
+            if (cached) {
+                var obj = JSON.parse(cached);
+                if (now - obj.timestamp < CACHE_TIME) {
+                    data = obj.data;
+                }
+            }
+        } catch(e) {}
+    }
+
+    if (data) {
+        procesarDatos(data);
+    } else {
+        // Mostrar mensaje de carga
+        grid.innerHTML = '<div style="padding:40px; color:#ffb28c;">Conectando con el servidor... (esto puede tomar hasta 15 segundos en PS3)</div>';
+
+        var xhr = new XMLHttpRequest();
+        // Usar la URL sin parámetros para evitar posibles problemas
+        xhr.open('GET', JSON_URL, true);
+        // Timeout de 15 segundos para la lenta conexión de PS3
+        xhr.timeout = 15000;
+
+        xhr.onload = function() {
+            if (xhr.status === 200 || xhr.status === 0) {
+                var responseText = xhr.responseText;
+                if (!responseText || responseText.trim() === '') {
+                    mostrarError('El servidor respondió con contenido vacío.');
+                    return;
+                }
+
+                // Vista previa para depuración (opcional, se puede quitar si ya funciona)
+                var preview = responseText.length > 200 ? responseText.substring(0, 200) + '...' : responseText;
+                grid.innerHTML = '<div style="color:orange; text-align:left; padding:20px;">' +
+                                 '<b>Recibidos ' + responseText.length + ' caracteres.</b><br>' +
+                                 '<b>Primeros caracteres:</b><br><pre style="background:#111; color:#0f0; padding:10px;">' + escapeHTML(preview) + '</pre>' +
+                                 '<i>Procesando...</i></div>';
+
                 try {
-                    var jsonData = JSON.parse(xhr.responseText);
-                    // Si funciona, procesar datos
+                    var jsonData = JSON.parse(responseText);
+                    // Guardar en caché
                     if (typeof localStorage !== 'undefined') {
                         try {
                             localStorage.setItem(CACHE_KEY, JSON.stringify({
@@ -275,14 +300,30 @@ function cargarJSON() {
                     }
                     procesarDatos(jsonData);
                 } catch(e) {
-                    grid.innerHTML += '<br><span style="color:red">Error parse: ' + e.message + '</span>';
+                    mostrarError('Error al parsear JSON: ' + e.message + '<br><br>Primeros 200 caracteres:<br><pre style="background:#111; color:#f66; padding:10px;">' + escapeHTML(preview) + '</pre>');
                 }
             } else {
-                grid.innerHTML += '<br><span style="color:red">No se recibió contenido válido.</span>';
+                mostrarError('Error HTTP: ' + xhr.status);
             }
-        }
-    };
-    xhr.send();
+        };
+
+        xhr.onerror = function() {
+            mostrarError('Error de red. No se pudo conectar con el servidor. Comprueba tu conexión a Internet.');
+        };
+
+        xhr.ontimeout = function() {
+            mostrarError('Tiempo de espera agotado (15 segundos). El servidor no respondió a tiempo.');
+        };
+
+        xhr.send();
+    }
+}
+
+function mostrarError(mensaje) {
+    grid.innerHTML = '<div style="color:red; text-align:left; padding:20px;">' +
+                     '<b>ERROR:</b><br>' + mensaje +
+                     '<br><br><button onclick="cargarJSON()" style="padding:10px; background:#ff6b35; border:none; color:white; border-radius:5px; cursor:pointer;">Reintentar</button>' +
+                     '</div>';
 }
 
 function procesarDatos(data) {
