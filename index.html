@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>PS3 THM KZ</title>
+    <title>TEST PS3 - Solo Imágenes Comprimidas</title>
     <style>
         /* Estilos base para PS3 - Optimizados para NetFront */
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
@@ -52,7 +52,6 @@
             vertical-align: middle;
         }
         
-        /* BOTÓN ALEATORIO (ESTILO VERSION PKG) */
         .btn-aleatorio {
             display: inline-block;
             background: #ff6b35;
@@ -90,7 +89,7 @@
             vertical-align: middle;
             line-height: 46px;
         }
-        /* CREDITOS MOVIDOS AL HEADER */
+        
         .credits-banner {
             height: 42px;
             display: inline-block;
@@ -121,11 +120,6 @@
             vertical-align: middle;
         }
 
-        .sort-btn.active { background: #ff6b35; color: #0b0f17; border-color: #ff6b35; }
-        .btn-genre-active { background: #0b1a2a; border-color: #ffb28c; color: #ffb28c; display: none; }
-        .btn-adult { border-color: #ff3535; color: #ff9b9b; }
-        .btn-adult.active { background: #ff3535; color: white; }
-
         .grid { text-align: center; clear: both; min-height: 600px; }
 
         .theme-card { width: 350px; background: #0e1727; border-radius: 20px; overflow: hidden; border: 2px solid #1f3a4c; display: inline-block; vertical-align: top; margin: 12px; text-align: left; }
@@ -138,8 +132,19 @@
         .download-btn { background: #ff6b35; color: #0b0f17; text-decoration: none; font-weight: bold; padding: 12px; border-radius: 40px; text-align: center; display: block; font-size: 15px; }
 
         .pagination-container { text-align: center; margin: 40px 0; }
-        .page-box { display: inline-block; width: 50px; height: 50px; line-height: 46px; background: #1e3b4f; border: 2px solid #1e3b4f; color: #fff; margin: 0 4px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 16px; text-decoration: none; vertical-align: middle; border: 2px solid #1e3b4f; }
+        .page-box { display: inline-block; width: 50px; height: 50px; line-height: 46px; background: #1e3b4f; border: 2px solid #1e3b4f; color: #fff; margin: 0 4px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 16px; text-decoration: none; vertical-align: middle; }
         .page-box.active { background: #ff6b35; border-color: #ff6b35; color: #0b0f17; }
+
+        /* ESTILO PARA EL INDICADOR DE PRUEBA */
+        .test-status {
+            background: #ff3535;
+            color: white;
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 15px;
+            border-radius: 10px;
+        }
 
         .footer { margin-top: 50px; border-top: 3px solid #ff6b3540; padding: 25px 0; color: #b0c8e0; font-size: 16px; }
         .clearfix::after { content: ""; display: table; clear: both; }
@@ -148,9 +153,10 @@
 <body>
 
 <div class="main-container">
+    <div id="statusMsg" class="test-status">MODO DE PRUEBA: Imágenes HD desactivadas.</div>
+
     <div class="header clearfix">
         <img src="recursos/titulo.png" alt="Logo" class="logo-img" onclick="volverInicio()">
-        
         <img src="recursos/credits.png" class="credits-banner">
 
         <div class="social-container">
@@ -184,24 +190,24 @@
     <div class="pagination-container" id="pagination"></div>
 
     <div class="footer clearfix">
-        <span style="float:left">© PS3 THM KZ</span>
+        <span style="float:left">© PS3 THM KZ - TEST MODE</span>
         <span style="float:right">Youtube KiZeo</span>
     </div>
 </div>
 
 <script>
-    // Variables de configuración
     var JSON_URL = 'temas_ps3_conlinks.json';
     var PAGE_SIZE = 12; 
     var PALABRAS_ADULTO = ['adult', '18+', 'girls/adult', 'sexy', 'ecchi', 'hentai', 'babes', 'harem', 'j-idols', 'j-idol', 'people','Girl','Girls'];
     var G_EMPTY_GIF = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
     
-    // DETECCIÓN DE PS3
+    // --- LÓGICA DE DETECCIÓN Y BLOQUEO TEMPORAL ---
     var isPS3 = navigator.userAgent.indexOf('PLAYSTATION 3') !== -1;
     var PREVIEW_FOLDERS = [];
+    var statusMsg = document.getElementById('statusMsg');
 
     if (isPS3) {
-        // Rutas para PlayStation 3 (Imágenes comprimidas)
+        // EN PS3: Cargamos desde el repositorio de imágenes comprimidas
         var baseCompresed = 'https://raw.githubusercontent.com/kizeocloud1/Previews-compresed/main/';
         PREVIEW_FOLDERS = [
             baseCompresed + 'previews1/',
@@ -211,21 +217,14 @@
             baseCompresed + 'previews5/',
             baseCompresed + 'previews6/'
         ];
-        console.log("Modo PS3 detectado: Usando imágenes comprimidas.");
+        statusMsg.innerHTML = "SISTEMA: PS3 DETECTADO. Cargando imágenes comprimidas.";
+        statusMsg.style.background = "#28a745"; // Verde si funciona
     } else {
-        // Rutas para PC/Celular (Imágenes originales)
-        PREVIEW_FOLDERS = [
-            'previews1/', 
-            'previews2/', 
-            'https://raw.githubusercontent.com/kizeocloud1/ps3cloud/main/previews3/',
-            'https://raw.githubusercontent.com/kizeocloud1/ps3cloud1/main/previews4/',
-            'https://raw.githubusercontent.com/kizeocloud1/ps3cloud2/main/previews5/',
-            'https://raw.githubusercontent.com/kizeocloud1/kizeocloud3/main/previews6/'
-        ];
-        console.log("Modo PC/Móvil detectado: Usando imágenes originales.");
+        // EN PC/MOVIL: Las imágenes NO aparecerán porque las rutas están vacías
+        PREVIEW_FOLDERS = ["", "", "", "", "", ""]; 
+        statusMsg.innerHTML = "SISTEMA: PC/MOVIL DETECTADO. Imágenes HD desactivadas (Prueba).";
     }
 
-    // Variables de estado
     var allThemes = [];
     var filteredThemes = [];
     var currentPage = 0;
@@ -235,7 +234,6 @@
     var searchTimer = null; 
     var imageQueue = [];
 
-    // Elementos del DOM
     var grid = document.getElementById('themeGrid');
     var statsDiv = document.getElementById('stats');
     var paginationDiv = document.getElementById('pagination');
@@ -248,7 +246,6 @@
     function cargarJSON() {
         var xhr = new XMLHttpRequest();
         var url = JSON_URL + '?t=' + new Date().getTime();
-        
         xhr.open('GET', url, true);
         xhr.onreadystatechange = function() {
             if (xhr.readyState === 4) {
@@ -267,72 +264,43 @@
                             });
                         }
                         aplicarFiltros();
-                    } catch(e) { 
-                        grid.innerHTML = '<div style="color:red">Error de memoria o JSON inválido.</div>'; 
-                    }
-                } else {
-                    grid.innerHTML = '<div style="color:red">No se pudo cargar el archivo JSON (Error '+xhr.status+').</div>';
+                    } catch(e) { grid.innerHTML = 'Error de memoria.'; }
                 }
             }
         };
         xhr.send(null);
     }
 
-    window.buscarConRetraso = function() {
-        clearTimeout(searchTimer);
-        searchTimer = setTimeout(function() {
-            currentGenre = '';
-            currentPage = 0;
-            esModoAleatorio = false; 
-            aplicarFiltros();
-        }, 600);
-    };
-
     function aplicarFiltros() {
         var query = ps3Trim(searchInput.value).toLowerCase();
         filteredThemes = [];
-        
-        var genreBtn = document.getElementById('genreActiveBtn');
-        if(currentGenre !== '') {
-            genreBtn.style.display = 'inline-block';
-            genreBtn.innerHTML = currentGenre + " X";
-        } else {
-            genreBtn.style.display = 'none';
-        }
-
         for (var i = 0; i < allThemes.length; i++) {
             var t = allThemes[i];
             var genNormalizado = t.genero.toLowerCase();
-            
             var isAdult = false;
             for(var j=0; j<PALABRAS_ADULTO.length; j++) {
-                if(genNormalizado.indexOf(PALABRAS_ADULTO[j].toLowerCase()) !== -1) { 
-                    isAdult = true; 
-                    break; 
-                }
+                if(genNormalizado.indexOf(PALABRAS_ADULTO[j].toLowerCase()) !== -1) { isAdult = true; break; }
             }
             if(!mostrarContenidoAdulto && isAdult) continue;
-
-            if(t.nombre.toLowerCase().indexOf(query) !== -1 && 
-               (currentGenre === '' || genNormalizado === currentGenre.toLowerCase())) {
+            if(t.nombre.toLowerCase().indexOf(query) !== -1 && (currentGenre === '' || genNormalizado === currentGenre.toLowerCase())) {
                 filteredThemes.push(t);
             }
         }
         render();
     }
 
-    function crearHTMLTarjeta(t, index, esDestacado) {
+    function crearHTMLTarjeta(t, index) {
         var imgName = encodeURIComponent(t.nombre + '.png').replace(/'/g, "%27");
-        var folder = PREVIEW_FOLDERS[t.preview_idx] || PREVIEW_FOLDERS[0];
-        var estiloExtra = esDestacado ? ' style="border-color: #ffb28c; box-shadow: 0 0 10px #ffb28c;"' : '';
+        var folder = PREVIEW_FOLDERS[t.preview_idx] || "";
         
-        imageQueue.push({ id: 'img_' + index, src: folder + imgName, name: imgName, idx: t.preview_idx });
+        // Si el folder está vacío (caso PC), la imagen simplemente no cargará
+        imageQueue.push({ id: 'img_' + index, src: folder ? folder + imgName : "", name: imgName, idx: t.preview_idx });
 
-        return '<div class="theme-card"' + estiloExtra + '>' +
+        return '<div class="theme-card">' +
                 '<div class="preview"><img src="' + G_EMPTY_GIF + '" id="img_' + index + '"></div>' +
                 '<div class="card-info">' +
                     '<div class="theme-name">' + t.nombre + '</div>' +
-                    '<div class="theme-genre" onclick="filtrarPorGenero(\''+t.genero.replace(/'/g, "\\'")+'\')">' + t.genero + '</div>' +
+                    '<div class="theme-genre">' + t.genero + '</div>' +
                     '<a href="' + t.descarga + '" class="download-btn">DESCARGAR</a>' +
                 '</div>' +
             '</div>';
@@ -340,17 +308,11 @@
 
     function procesarColaImagenes() {
         if (imageQueue.length === 0) return;
-        
         var item = imageQueue.shift();
         var imgEl = document.getElementById(item.id);
-        
-        if (imgEl) {
+        if (imgEl && item.src !== "") {
             imgEl.onload = function() { procesarColaImagenes(); };
-            imgEl.onerror = function() { 
-                window.proximaCarpeta(this, item.idx, item.name, function() {
-                    procesarColaImagenes();
-                });
-            };
+            imgEl.onerror = function() { procesarColaImagenes(); };
             imgEl.src = item.src;
         } else {
             procesarColaImagenes();
@@ -360,26 +322,13 @@
     function render() {
         imageQueue = [];
         var html = "";
-        
-        if (!esModoAleatorio && currentPage === 0 && currentGenre === '' && ps3Trim(searchInput.value) === '') {
-            var destacados = [];
-            for(var k=0; k<allThemes.length; k++) {
-                if(allThemes[k].genero === 'AnimugenZ') destacados.push(allThemes[k]);
-                if(destacados.length >= 2) break;
-            }
-            for(var d=0; d<destacados.length; d++) html += crearHTMLTarjeta(destacados[d], 'dest_'+d, true);
-        }
-
         var start = currentPage * PAGE_SIZE;
         var end = Math.min(start + PAGE_SIZE, filteredThemes.length);
-        
         for (var i = start; i < end; i++) {
-            html += crearHTMLTarjeta(filteredThemes[i], i, false);
+            html += crearHTMLTarjeta(filteredThemes[i], i);
         }
-
         grid.innerHTML = html || '<div style="padding:40px;">No se encontraron resultados.</div>';
         statsDiv.innerHTML = filteredThemes.length + ' Temas';
-        
         dibujarPaginacion();
         setTimeout(procesarColaImagenes, 100);
     }
@@ -388,39 +337,21 @@
         var totalPages = Math.ceil(filteredThemes.length / PAGE_SIZE);
         paginationDiv.innerHTML = '';
         if(totalPages <= 1) return;
-
-        var startPage = Math.max(0, currentPage - 4);
-        var endPage = Math.min(totalPages - 1, startPage + 9);
-
-        for (var p = startPage; p <= endPage; p++) {
+        for (var p = 0; p < Math.min(totalPages, 10); p++) {
             var btn = document.createElement('button');
             btn.className = (p === currentPage) ? 'page-box active' : 'page-box';
             btn.innerHTML = (p + 1);
-            btn.onclick = (function(page) {
-                return function() { 
-                    currentPage = page; 
-                    render(); 
-                    window.scrollTo(0, 300); 
-                };
-            })(p);
+            btn.onclick = (function(page) { return function() { currentPage = page; render(); }; })(p);
             paginationDiv.appendChild(btn);
         }
     }
 
-    window.proximaCarpeta = function(img, idx, name, callback) {
-        var nIdx = idx + 1;
-        if(nIdx < PREVIEW_FOLDERS.length) {
-            img.onerror = function() { proximaCarpeta(img, nIdx, name, callback); };
-            img.onload = function() { if(callback) callback(); };
-            img.src = PREVIEW_FOLDERS[nIdx] + name;
-        } else { 
-            img.style.display = 'none'; 
-            if(callback) callback();
-        }
+    window.buscarConRetraso = function() {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(function() { currentPage = 0; aplicarFiltros(); }, 600);
     };
 
     window.modoAleatorio = function() {
-        esModoAleatorio = true;
         filteredThemes.sort(function() { return 0.5 - Math.random(); });
         currentPage = 0;
         render();
@@ -428,34 +359,9 @@
 
     window.toggleAdulto = function() {
         mostrarContenidoAdulto = !mostrarContenidoAdulto;
-        var btn = document.getElementById('adultBtn');
-        btn.innerHTML = mostrarContenidoAdulto ? "+18 ON" : "+18 OFF";
-        btn.className = mostrarContenidoAdulto ? "sort-btn btn-adult active" : "sort-btn btn-adult";
-        currentPage = 0;
+        document.getElementById('adultBtn').className = mostrarContenidoAdulto ? "sort-btn btn-adult active" : "sort-btn btn-adult";
         aplicarFiltros();
     };
-
-    window.filtrarPorGenero = function(g) { 
-        currentGenre = g; 
-        searchInput.value = ''; 
-        currentPage = 0; 
-        aplicarFiltros(); 
-    };
-    
-    window.volverInicio = function() { 
-        searchInput.value = ''; 
-        currentGenre = ''; 
-        currentPage = 0; 
-        esModoAleatorio = false; 
-        aplicarFiltros(); 
-    };
-
-    window.addEventListener("unload", function() {
-        allThemes = null;
-        filteredThemes = null;
-        imageQueue = null;
-        grid.innerHTML = "";
-    });
 
     setTimeout(cargarJSON, 500);
 </script>
