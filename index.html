@@ -196,13 +196,34 @@
     var PALABRAS_ADULTO = ['adult', '18+', 'girls/adult', 'sexy', 'ecchi', 'hentai', 'babes', 'harem', 'j-idols', 'j-idol', 'people','Girl','Girls'];
     var G_EMPTY_GIF = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
     
-    var PREVIEW_FOLDERS = [
-        'previews1/', 'previews2/', 
-        'https://raw.githubusercontent.com/kizeocloud1/ps3cloud/main/previews3/',
-        'https://raw.githubusercontent.com/kizeocloud1/ps3cloud1/main/previews4/',
-        'https://raw.githubusercontent.com/kizeocloud1/ps3cloud2/main/previews5/',
-        'https://raw.githubusercontent.com/kizeocloud1/kizeocloud3/main/previews6/'
-    ];
+    // DETECCIÓN DE PS3
+    var isPS3 = navigator.userAgent.indexOf('PLAYSTATION 3') !== -1;
+    var PREVIEW_FOLDERS = [];
+
+    if (isPS3) {
+        // Rutas para PlayStation 3 (Imágenes comprimidas)
+        var baseCompresed = 'https://raw.githubusercontent.com/kizeocloud1/Previews-compresed/main/';
+        PREVIEW_FOLDERS = [
+            baseCompresed + 'previews1/',
+            baseCompresed + 'previews2/', 
+            baseCompresed + 'previews3/',
+            baseCompresed + 'previews4/',
+            baseCompresed + 'previews5/',
+            baseCompresed + 'previews6/'
+        ];
+        console.log("Modo PS3 detectado: Usando imágenes comprimidas.");
+    } else {
+        // Rutas para PC/Celular (Imágenes originales)
+        PREVIEW_FOLDERS = [
+            'previews1/', 
+            'previews2/', 
+            'https://raw.githubusercontent.com/kizeocloud1/ps3cloud/main/previews3/',
+            'https://raw.githubusercontent.com/kizeocloud1/ps3cloud1/main/previews4/',
+            'https://raw.githubusercontent.com/kizeocloud1/ps3cloud2/main/previews5/',
+            'https://raw.githubusercontent.com/kizeocloud1/kizeocloud3/main/previews6/'
+        ];
+        console.log("Modo PC/Móvil detectado: Usando imágenes originales.");
+    }
 
     // Variables de estado
     var allThemes = [];
@@ -220,14 +241,12 @@
     var paginationDiv = document.getElementById('pagination');
     var searchInput = document.getElementById('searchInput');
 
-    // Función de limpieza de espacios para PS3 (Reemplaza a .trim())
     function ps3Trim(str) {
         return str.replace(/^\s+|\s+$/g, '');
     }
 
     function cargarJSON() {
         var xhr = new XMLHttpRequest();
-        // Añadimos timestamp para evitar caché agresivo de PS3
         var url = JSON_URL + '?t=' + new Date().getTime();
         
         xhr.open('GET', url, true);
@@ -270,7 +289,6 @@
     };
 
     function aplicarFiltros() {
-        // Usamos ps3Trim para evitar que los espacios vacíos rompan la búsqueda
         var query = ps3Trim(searchInput.value).toLowerCase();
         filteredThemes = [];
         
@@ -286,7 +304,6 @@
             var t = allThemes[i];
             var genNormalizado = t.genero.toLowerCase();
             
-            // Filtro Adulto
             var isAdult = false;
             for(var j=0; j<PALABRAS_ADULTO.length; j++) {
                 if(genNormalizado.indexOf(PALABRAS_ADULTO[j].toLowerCase()) !== -1) { 
@@ -296,7 +313,6 @@
             }
             if(!mostrarContenidoAdulto && isAdult) continue;
 
-            // Filtro Nombre y Género
             if(t.nombre.toLowerCase().indexOf(query) !== -1 && 
                (currentGenre === '' || genNormalizado === currentGenre.toLowerCase())) {
                 filteredThemes.push(t);
@@ -345,7 +361,6 @@
         imageQueue = [];
         var html = "";
         
-        // Destacados (Solo en página 1 sin búsqueda)
         if (!esModoAleatorio && currentPage === 0 && currentGenre === '' && ps3Trim(searchInput.value) === '') {
             var destacados = [];
             for(var k=0; k<allThemes.length; k++) {
@@ -366,7 +381,6 @@
         statsDiv.innerHTML = filteredThemes.length + ' Temas';
         
         dibujarPaginacion();
-        // Pequeño delay para que el navegador de PS3 respire antes de cargar imágenes
         setTimeout(procesarColaImagenes, 100);
     }
 
@@ -436,7 +450,6 @@
         aplicarFiltros(); 
     };
 
-    // Liberar memoria al salir (Importante en PS3)
     window.addEventListener("unload", function() {
         allThemes = null;
         filteredThemes = null;
@@ -444,7 +457,6 @@
         grid.innerHTML = "";
     });
 
-    // Iniciar con un ligero retraso para estabilidad
     setTimeout(cargarJSON, 500);
 </script>
 </body>
