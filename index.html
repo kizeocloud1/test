@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <title>PS3 THM KZ</title>
     <style>
-        /* Estilos base optimizados para PS3 y navegación rápida */
+        /* Estilos base para PS3 - Optimizados para NetFront */
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
         body { background: #0b0f17; color: #e0e5f0; font-family: Arial, sans-serif; line-height: 1.2; padding: 20px 0; text-align: center; }
         
@@ -16,7 +16,7 @@
         .social-container { float: right; background: #0a1a2a; padding: 10px 30px; border-radius: 60px; border: 3px solid #ff6b35; margin-top: 15px; }
         .social-icon { width: 62px; height: 62px; margin: 0 7px; vertical-align: middle; }
 
-        /* ===== TOOLBAR ===== */
+        /* ===== TOOLBAR OPTIMIZADO ===== */
         .toolbar {
             display: table;
             width: 100%;
@@ -32,9 +32,14 @@
             display: table-cell;
             vertical-align: middle;
         }
-        .toolbar-right { text-align: right; }
-        
-        .search-wrapper { display: inline-block; vertical-align: middle; margin-right: 10px; }
+        .toolbar-right {
+            text-align: right;
+        }
+        .search-wrapper {
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
         .search-wrapper input {
             width: 310px;
             height: 50px;
@@ -47,6 +52,7 @@
             vertical-align: middle;
         }
         
+        /* BOTÓN ALEATORIO (ESTILO VERSION PKG) */
         .btn-aleatorio {
             display: inline-block;
             background: #ff6b35;
@@ -65,6 +71,11 @@
             text-transform: uppercase;
         }
 
+        .sort-buttons {
+            display: inline-block;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
         .sort-btn {
             height: 50px;
             background: #1e3b4f;
@@ -79,9 +90,22 @@
             vertical-align: middle;
             line-height: 46px;
         }
-
-        .credits-banner { height: 42px; display: inline-block; margin-top: 73px; margin-bottom: -20px; vertical-align: bottom; }
-        .stats { display: inline-block; vertical-align: middle; color: #9ab8d9; font-weight: bold; font-size: 18px; margin-right: 20px; }
+        /* CREDITOS MOVIDOS AL HEADER */
+        .credits-banner {
+            height: 42px;
+            display: inline-block;
+            margin-top: 73px;
+            margin-bottom: -20px;
+            vertical-align: bottom;
+        }
+        .stats {
+            display: inline-block;
+            vertical-align: middle;
+            color: #9ab8d9;
+            font-weight: bold;
+            font-size: 18px;
+            margin-right: 20px;
+        }
         .btn-pkg {
             display: inline-block;
             background: #ff6b35;
@@ -114,7 +138,7 @@
         .download-btn { background: #ff6b35; color: #0b0f17; text-decoration: none; font-weight: bold; padding: 12px; border-radius: 40px; text-align: center; display: block; font-size: 15px; }
 
         .pagination-container { text-align: center; margin: 40px 0; }
-        .page-box { display: inline-block; width: 50px; height: 50px; line-height: 46px; background: #1e3b4f; border: 2px solid #1e3b4f; color: #fff; margin: 0 4px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 16px; text-decoration: none; vertical-align: middle; }
+        .page-box { display: inline-block; width: 50px; height: 50px; line-height: 46px; background: #1e3b4f; border: 2px solid #1e3b4f; color: #fff; margin: 0 4px; border-radius: 10px; font-weight: bold; cursor: pointer; font-size: 16px; text-decoration: none; vertical-align: middle; border: 2px solid #1e3b4f; }
         .page-box.active { background: #ff6b35; border-color: #ff6b35; color: #0b0f17; }
 
         .footer { margin-top: 50px; border-top: 3px solid #ff6b3540; padding: 25px 0; color: #b0c8e0; font-size: 16px; }
@@ -126,7 +150,9 @@
 <div class="main-container">
     <div class="header clearfix">
         <img src="recursos/titulo.png" alt="Logo" class="logo-img" onclick="volverInicio()">
+        
         <img src="recursos/credits.png" class="credits-banner">
+
         <div class="social-container">
             <a href="https://www.youtube.com/@kizeo0/videos"><img src="recursos/yt.png" class="social-icon"></a>
             <a href="https://github.com/kizeo0"><img src="recursos/git.png" class="social-icon"></a>
@@ -158,18 +184,19 @@
     <div class="pagination-container" id="pagination"></div>
 
     <div class="footer clearfix">
-        <span style="float:left">© PS3 THM KZ - Optimized</span>
+        <span style="float:left">© PS3 THM KZ</span>
         <span style="float:right">Youtube KiZeo</span>
     </div>
 </div>
 
 <script>
+    // Variables de configuración
     var JSON_URL = 'temas_ps3_conlinks.json';
     var PAGE_SIZE = 12; 
     var PALABRAS_ADULTO = ['adult', '18+', 'girls/adult', 'sexy', 'ecchi', 'hentai', 'babes', 'harem', 'j-idols', 'j-idol', 'people','Girl','Girls'];
     var G_EMPTY_GIF = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
     
-    // RUTAS FIJAS A IMÁGENES COMPRIMIDAS (Para todos los dispositivos)
+    // RUTAS FIJAS: Ahora solo se usan las imágenes comprimidas para todos los dispositivos
     var baseCompresed = 'https://raw.githubusercontent.com/kizeocloud1/Previews-compresed/main/';
     var PREVIEW_FOLDERS = [
         baseCompresed + 'previews1/',
@@ -180,6 +207,7 @@
         baseCompresed + 'previews6/'
     ];
 
+    // Variables de estado
     var allThemes = [];
     var filteredThemes = [];
     var currentPage = 0;
@@ -189,66 +217,100 @@
     var searchTimer = null; 
     var imageQueue = [];
 
+    // Elementos del DOM
     var grid = document.getElementById('themeGrid');
     var statsDiv = document.getElementById('stats');
     var paginationDiv = document.getElementById('pagination');
     var searchInput = document.getElementById('searchInput');
 
-    function ps3Trim(str) { return str.replace(/^\s+|\s+$/g, ''); }
+    function ps3Trim(str) {
+        return str.replace(/^\s+|\s+$/g, '');
+    }
 
     function cargarJSON() {
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', JSON_URL + '?t=' + new Date().getTime(), true);
+        var url = JSON_URL + '?t=' + new Date().getTime();
+        
+        xhr.open('GET', url, true);
         xhr.onreadystatechange = function() {
-            if (xhr.readyState === 4 && (xhr.status === 200 || xhr.status === 0)) {
-                try {
-                    var data = JSON.parse(xhr.responseText);
-                    allThemes = [];
-                    for (var i = 0; i < data.length; i++) {
-                        var item = data[i];
-                        allThemes.push({
-                            archivo: item.archivo,
-                            descarga: item.descarga,
-                            genero: item.genero || 'Otro',
-                            nombre: item.archivo.replace(/\.p3t$/i, ''),
-                            preview_idx: item.preview_idx || 0
-                        });
+            if (xhr.readyState === 4) {
+                if (xhr.status === 200 || xhr.status === 0) {
+                    try {
+                        var data = JSON.parse(xhr.responseText);
+                        allThemes = [];
+                        for (var i = 0; i < data.length; i++) {
+                            var item = data[i];
+                            allThemes.push({
+                                archivo: item.archivo,
+                                descarga: item.descarga,
+                                genero: item.genero || 'Otro',
+                                nombre: item.archivo.replace(/\.p3t$/i, ''),
+                                preview_idx: item.preview_idx || 0
+                            });
+                        }
+                        aplicarFiltros();
+                    } catch(e) { 
+                        grid.innerHTML = '<div style="color:red">Error de memoria o JSON inválido.</div>'; 
                     }
-                    aplicarFiltros();
-                } catch(e) { grid.innerHTML = 'Error en JSON.'; }
+                } else {
+                    grid.innerHTML = '<div style="color:red">No se pudo cargar el archivo JSON (Error '+xhr.status+').</div>';
+                }
             }
         };
         xhr.send(null);
     }
 
+    window.buscarConRetraso = function() {
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(function() {
+            currentGenre = '';
+            currentPage = 0;
+            esModoAleatorio = false; 
+            aplicarFiltros();
+        }, 600);
+    };
+
     function aplicarFiltros() {
         var query = ps3Trim(searchInput.value).toLowerCase();
         filteredThemes = [];
+        
         var genreBtn = document.getElementById('genreActiveBtn');
-        genreBtn.style.display = (currentGenre !== '') ? 'inline-block' : 'none';
-        if(currentGenre !== '') genreBtn.innerHTML = currentGenre + " X";
+        if(currentGenre !== '') {
+            genreBtn.style.display = 'inline-block';
+            genreBtn.innerHTML = currentGenre + " X";
+        } else {
+            genreBtn.style.display = 'none';
+        }
 
         for (var i = 0; i < allThemes.length; i++) {
             var t = allThemes[i];
             var genNormalizado = t.genero.toLowerCase();
+            
             var isAdult = false;
             for(var j=0; j<PALABRAS_ADULTO.length; j++) {
-                if(genNormalizado.indexOf(PALABRAS_ADULTO[j].toLowerCase()) !== -1) { isAdult = true; break; }
+                if(genNormalizado.indexOf(PALABRAS_ADULTO[j].toLowerCase()) !== -1) { 
+                    isAdult = true; 
+                    break; 
+                }
             }
             if(!mostrarContenidoAdulto && isAdult) continue;
-            if(t.nombre.toLowerCase().indexOf(query) !== -1 && (currentGenre === '' || genNormalizado === currentGenre.toLowerCase())) {
+
+            if(t.nombre.toLowerCase().indexOf(query) !== -1 && 
+               (currentGenre === '' || genNormalizado === currentGenre.toLowerCase())) {
                 filteredThemes.push(t);
             }
         }
         render();
     }
 
-    function crearHTMLTarjeta(t, index) {
+    function crearHTMLTarjeta(t, index, esDestacado) {
         var imgName = encodeURIComponent(t.nombre + '.png').replace(/'/g, "%27");
         var folder = PREVIEW_FOLDERS[t.preview_idx] || PREVIEW_FOLDERS[0];
+        var estiloExtra = esDestacado ? ' style="border-color: #ffb28c; box-shadow: 0 0 10px #ffb28c;"' : '';
+        
         imageQueue.push({ id: 'img_' + index, src: folder + imgName, name: imgName, idx: t.preview_idx });
 
-        return '<div class="theme-card">' +
+        return '<div class="theme-card"' + estiloExtra + '>' +
                 '<div class="preview"><img src="' + G_EMPTY_GIF + '" id="img_' + index + '"></div>' +
                 '<div class="card-info">' +
                     '<div class="theme-name">' + t.nombre + '</div>' +
@@ -260,23 +322,46 @@
 
     function procesarColaImagenes() {
         if (imageQueue.length === 0) return;
+        
         var item = imageQueue.shift();
         var imgEl = document.getElementById(item.id);
+        
         if (imgEl) {
             imgEl.onload = function() { procesarColaImagenes(); };
-            imgEl.onerror = function() { window.proximaCarpeta(this, item.idx, item.name, function() { procesarColaImagenes(); }); };
+            imgEl.onerror = function() { 
+                window.proximaCarpeta(this, item.idx, item.name, function() {
+                    procesarColaImagenes();
+                });
+            };
             imgEl.src = item.src;
-        } else { procesarColaImagenes(); }
+        } else {
+            procesarColaImagenes();
+        }
     }
 
     function render() {
         imageQueue = [];
         var html = "";
+        
+        if (!esModoAleatorio && currentPage === 0 && currentGenre === '' && ps3Trim(searchInput.value) === '') {
+            var destacados = [];
+            for(var k=0; k<allThemes.length; k++) {
+                if(allThemes[k].genero === 'AnimugenZ') destacados.push(allThemes[k]);
+                if(destacados.length >= 2) break;
+            }
+            for(var d=0; d<destacados.length; d++) html += crearHTMLTarjeta(destacados[d], 'dest_'+d, true);
+        }
+
         var start = currentPage * PAGE_SIZE;
         var end = Math.min(start + PAGE_SIZE, filteredThemes.length);
-        for (var i = start; i < end; i++) html += crearHTMLTarjeta(filteredThemes[i], i);
-        grid.innerHTML = html || '<div style="padding:40px;">No se encontraron temas.</div>';
+        
+        for (var i = start; i < end; i++) {
+            html += crearHTMLTarjeta(filteredThemes[i], i, false);
+        }
+
+        grid.innerHTML = html || '<div style="padding:40px;">No se encontraron resultados.</div>';
         statsDiv.innerHTML = filteredThemes.length + ' Temas';
+        
         dibujarPaginacion();
         setTimeout(procesarColaImagenes, 100);
     }
@@ -285,13 +370,21 @@
         var totalPages = Math.ceil(filteredThemes.length / PAGE_SIZE);
         paginationDiv.innerHTML = '';
         if(totalPages <= 1) return;
-        var startP = Math.max(0, currentPage - 4);
-        var endP = Math.min(totalPages - 1, startP + 9);
-        for (var p = startP; p <= endP; p++) {
+
+        var startPage = Math.max(0, currentPage - 4);
+        var endPage = Math.min(totalPages - 1, startPage + 9);
+
+        for (var p = startPage; p <= endPage; p++) {
             var btn = document.createElement('button');
             btn.className = (p === currentPage) ? 'page-box active' : 'page-box';
             btn.innerHTML = (p + 1);
-            btn.onclick = (function(page) { return function() { currentPage = page; render(); window.scrollTo(0, 300); }; })(p);
+            btn.onclick = (function(page) {
+                return function() { 
+                    currentPage = page; 
+                    render(); 
+                    window.scrollTo(0, 300); 
+                };
+            })(p);
             paginationDiv.appendChild(btn);
         }
     }
@@ -302,18 +395,49 @@
             img.onerror = function() { proximaCarpeta(img, nIdx, name, callback); };
             img.onload = function() { if(callback) callback(); };
             img.src = PREVIEW_FOLDERS[nIdx] + name;
-        } else { img.style.display = 'none'; if(callback) callback(); }
+        } else { 
+            img.style.display = 'none'; 
+            if(callback) callback();
+        }
     };
 
-    window.buscarConRetraso = function() {
-        clearTimeout(searchTimer);
-        searchTimer = setTimeout(function() { currentGenre = ''; currentPage = 0; esModoAleatorio = false; aplicarFiltros(); }, 600);
+    window.modoAleatorio = function() {
+        esModoAleatorio = true;
+        filteredThemes.sort(function() { return 0.5 - Math.random(); });
+        currentPage = 0;
+        render();
     };
 
-    window.modoAleatorio = function() { esModoAleatorio = true; filteredThemes.sort(function() { return 0.5 - Math.random(); }); currentPage = 0; render(); };
-    window.toggleAdulto = function() { mostrarContenidoAdulto = !mostrarContenidoAdulto; var btn = document.getElementById('adultBtn'); btn.innerHTML = mostrarContenidoAdulto ? "+18 ON" : "+18 OFF"; btn.className = mostrarContenidoAdulto ? "sort-btn btn-adult active" : "sort-btn btn-adult"; currentPage = 0; aplicarFiltros(); };
-    window.filtrarPorGenero = function(g) { currentGenre = g; searchInput.value = ''; currentPage = 0; aplicarFiltros(); };
-    window.volverInicio = function() { searchInput.value = ''; currentGenre = ''; currentPage = 0; esModoAleatorio = false; aplicarFiltros(); };
+    window.toggleAdulto = function() {
+        mostrarContenidoAdulto = !mostrarContenidoAdulto;
+        var btn = document.getElementById('adultBtn');
+        btn.innerHTML = mostrarContenidoAdulto ? "+18 ON" : "+18 OFF";
+        btn.className = mostrarContenidoAdulto ? "sort-btn btn-adult active" : "sort-btn btn-adult";
+        currentPage = 0;
+        aplicarFiltros();
+    };
+
+    window.filtrarPorGenero = function(g) { 
+        currentGenre = g; 
+        searchInput.value = ''; 
+        currentPage = 0; 
+        aplicarFiltros(); 
+    };
+    
+    window.volverInicio = function() { 
+        searchInput.value = ''; 
+        currentGenre = ''; 
+        currentPage = 0; 
+        esModoAleatorio = false; 
+        aplicarFiltros(); 
+    };
+
+    window.addEventListener("unload", function() {
+        allThemes = null;
+        filteredThemes = null;
+        imageQueue = null;
+        grid.innerHTML = "";
+    });
 
     setTimeout(cargarJSON, 500);
 </script>
