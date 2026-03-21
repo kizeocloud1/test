@@ -7,7 +7,7 @@
         /* Estilos base para PS3 - Optimizados para NetFront */
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
         body { background: #0b0f17; color: #e0e5f0; font-family: Arial, sans-serif; line-height: 1.2; padding: 20px 0; text-align: center; }
-        
+
         .main-container { width: 1750px; margin: 0 auto; text-align: left; }
 
         .header { overflow: hidden; margin-bottom: 25px; border-bottom: 5px solid #ff6b35; padding-bottom: 20px; text-align: center; }
@@ -118,7 +118,7 @@
             vertical-align: middle;
         }
 
-        /* Contador de género seleccionado junto a VERSION PKG */
+        /* Contador de genero seleccionado junto a VERSION PKG */
         .genre-filter-count {
             display: none;
             vertical-align: middle;
@@ -173,10 +173,9 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
+        /* Sin barra de scroll: se expande al alto que necesite */
         .genre-list {
-            overflow-y: auto;
-            overflow-x: hidden;
-            max-height: 820px;
+            overflow: visible;
         }
         .genre-item {
             display: block;
@@ -235,7 +234,7 @@
 <div class="main-container">
     <div class="header clearfix">
         <img src="recursos/titulo.png" alt="Logo" class="logo-img" onclick="volverInicio()">
-        
+
         <img src="recursos/credits.png" class="credits-banner">
 
         <div class="social-container">
@@ -294,7 +293,7 @@
     // Variables de configuracion
     var JSON_URL = 'temas_ps3_conlinks.json';
     var PAGE_SIZE = 12;
-    var PALABRAS_ADULTO = ['adult', '18+', 'girls/adult', 'sexy', 'ecchi', 'hentai', 'babes', 'harem', 'j-idols', 'j-idol', 'people','Girl','Girls'];
+    var PALABRAS_ADULTO = ['adult', '18+', 'girls/adult', 'sexy', 'ecchi', 'hentai', 'babes', 'harem', 'j-idols', 'j-idol', 'people', 'Girl', 'Girls'];
     var G_EMPTY_GIF = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
 
     // RUTAS FIJAS
@@ -327,6 +326,17 @@
 
     function ps3Trim(str) {
         return str.replace(/^\s+|\s+$/g, '');
+    }
+
+    // Devuelve true si el genero dado es de contenido adulto
+    function esGeneroAdulto(genero) {
+        var gen = genero.toLowerCase();
+        for (var i = 0; i < PALABRAS_ADULTO.length; i++) {
+            if (gen.indexOf(PALABRAS_ADULTO[i].toLowerCase()) !== -1) {
+                return true;
+            }
+        }
+        return false;
     }
 
     function cargarJSON() {
@@ -365,12 +375,19 @@
 
     // ===== SIDEBAR: construir lista de generos =====
     function construirSidebar() {
-        // Recoger generos unicos y ordenarlos alfabeticamente
+        // Recoger generos unicos, ordenarlos alfabeticamente
+        // y excluir los adultos si +18 esta en OFF
         var seen = {};
         var genres = [];
         for (var i = 0; i < allThemes.length; i++) {
             var g = allThemes[i].genero;
-            if (!seen[g]) { seen[g] = true; genres.push(g); }
+            if (!seen[g]) {
+                seen[g] = true;
+                // Solo incluir el genero adulto si +18 esta activado
+                if (!esGeneroAdulto(g) || mostrarContenidoAdulto) {
+                    genres.push(g);
+                }
+            }
         }
         genres.sort(function(a, b) {
             if (a < b) return -1;
@@ -378,15 +395,24 @@
             return 0;
         });
 
-        // "Todos" lleva el total entre parentesis, el resto solo el nombre
-        var html = '<button class="genre-item active" id="genre-btn-todos" onclick="volverInicio()">' +
-                   'Todos <span class="todos-count">' + allThemes.length + '</span></button>';
+        // Calcular total visible (sin adultos si estan ocultos)
+        var totalVisible = 0;
+        for (var t = 0; t < allThemes.length; t++) {
+            if (!esGeneroAdulto(allThemes[t].genero) || mostrarContenidoAdulto) {
+                totalVisible++;
+            }
+        }
+
+        // "Todos" con el total visible, el resto solo el nombre
+        var activeClass = (currentGenre === '') ? 'genre-item active' : 'genre-item';
+        var html = '<button class="' + activeClass + '" id="genre-btn-todos" onclick="volverInicio()">' +
+                   'Todos <span class="todos-count">' + totalVisible + '</span></button>';
 
         for (var j = 0; j < genres.length; j++) {
             var gn = genres[j];
-            // Escapar comillas simples para el onclick
             var safeG = gn.replace(/'/g, "&#39;");
-            html += '<button class="genre-item" onclick="filtrarPorGenero(\'' + safeG + '\')">' + gn + '</button>';
+            var itemClass = (gn === currentGenre) ? 'genre-item active' : 'genre-item';
+            html += '<button class="' + itemClass + '" onclick="filtrarPorGenero(\'' + safeG + '\')">' + gn + '</button>';
         }
 
         genreList.innerHTML = html;
@@ -403,7 +429,6 @@
             if (todosBtn) todosBtn.className = 'genre-item active';
         } else {
             for (var k = 0; k < items.length; k++) {
-                // Texto del boton sin el span del contador
                 var rawText = items[k].innerHTML;
                 var spanTag = items[k].getElementsByTagName('span');
                 if (spanTag.length > 0) {
@@ -457,13 +482,7 @@
             var t = allThemes[i];
             var genNormalizado = t.genero.toLowerCase();
 
-            var isAdult = false;
-            for (var j = 0; j < PALABRAS_ADULTO.length; j++) {
-                if (genNormalizado.indexOf(PALABRAS_ADULTO[j].toLowerCase()) !== -1) {
-                    isAdult = true;
-                    break;
-                }
-            }
+            var isAdult = esGeneroAdulto(t.genero);
             if (!mostrarContenidoAdulto && isAdult) continue;
 
             if (t.nombre.toLowerCase().indexOf(query) !== -1 &&
@@ -586,7 +605,15 @@
         var btn = document.getElementById('adultBtn');
         btn.innerHTML = mostrarContenidoAdulto ? "+18 ON" : "+18 OFF";
         btn.className = mostrarContenidoAdulto ? "sort-btn btn-adult active" : "sort-btn btn-adult";
+        // Si el genero activo era adulto y se ocultan, volver a Todos
+        if (!mostrarContenidoAdulto && currentGenre !== '' && esGeneroAdulto(currentGenre)) {
+            currentGenre = '';
+            var countEl = document.getElementById('genreFilterCount');
+            if (countEl) countEl.style.display = 'none';
+        }
         currentPage = 0;
+        // Reconstruir sidebar para mostrar u ocultar generos adultos
+        construirSidebar();
         aplicarFiltros();
     };
 
