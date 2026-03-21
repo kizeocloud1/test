@@ -16,7 +16,7 @@
         .social-container { float: right; background: #0a1a2a; padding: 10px 30px; border-radius: 60px; border: 3px solid #ff6b35; margin-top: 15px; }
         .social-icon { width: 62px; height: 62px; margin: 0 7px; vertical-align: middle; }
 
-        /* ===== TOOLBAR OPTIMIZADO ===== */
+        /* ===== TOOLBAR ===== */
         .toolbar {
             display: table;
             width: 100%;
@@ -32,9 +32,8 @@
             display: table-cell;
             vertical-align: middle;
         }
-        .toolbar-right {
-            text-align: right;
-        }
+        .toolbar-right { text-align: right; }
+
         .search-wrapper {
             display: inline-block;
             vertical-align: middle;
@@ -52,7 +51,6 @@
             vertical-align: middle;
         }
 
-        /* BOTÓN ALEATORIO */
         .btn-aleatorio {
             display: inline-block;
             background: #ff6b35;
@@ -120,6 +118,22 @@
             vertical-align: middle;
         }
 
+        /* Contador de género seleccionado junto a VERSION PKG */
+        .genre-filter-count {
+            display: none;
+            vertical-align: middle;
+            background: #0a1a2a;
+            border: 2px solid #ff6b35;
+            color: #ffb28c;
+            font-weight: bold;
+            font-size: 16px;
+            padding: 0 20px;
+            border-radius: 40px;
+            height: 50px;
+            line-height: 50px;
+            margin-right: 12px;
+        }
+
         .sort-btn.active { background: #ff6b35; color: #0b0f17; border-color: #ff6b35; }
         .btn-genre-active { background: #0b1a2a; border-color: #ffb28c; color: #ffb28c; display: none; }
         .btn-adult { border-color: #ff3535; color: #ff9b9b; }
@@ -142,7 +156,7 @@
             vertical-align: top;
         }
 
-        /* ===== SIDEBAR DE GÉNEROS ===== */
+        /* ===== SIDEBAR DE GENEROS ===== */
         .genre-sidebar {
             background: #0a1a2a;
             border-radius: 18px;
@@ -180,7 +194,9 @@
         }
         .genre-item:hover { background: #112030; color: #ffb28c; }
         .genre-item.active { background: #1e3b4f; color: #ff6b35; border-left: 4px solid #ff6b35; padding-left: 12px; }
-        .genre-item-count {
+
+        /* Contador solo visible en el boton Todos */
+        .todos-count {
             float: right;
             background: #0b1a2a;
             color: #5a7a90;
@@ -189,7 +205,7 @@
             border-radius: 8px;
             font-weight: normal;
         }
-        .genre-item.active .genre-item-count {
+        .genre-item.active .todos-count {
             background: #ff6b3530;
             color: #ffb28c;
         }
@@ -242,6 +258,7 @@
         </div>
         <div class="toolbar-right">
             <span class="stats" id="stats">...</span>
+            <span class="genre-filter-count" id="genreFilterCount"></span>
             <a href="https://github.com/kizeo0/PS3-THM-KZ/releases/download/PKG/PS3.THM.KZ.pkg" class="btn-pkg">VERSION PKG</a>
         </div>
     </div>
@@ -251,7 +268,7 @@
 
         <div class="sidebar-cell">
             <div class="genre-sidebar">
-                <div class="sidebar-title">Géneros</div>
+                <div class="sidebar-title">Generos</div>
                 <div class="genre-list" id="genreList">
                     <div style="padding:16px; color:#5a7a90; font-size:13px;">Cargando...</div>
                 </div>
@@ -274,7 +291,7 @@
 </div>
 
 <script>
-    // Variables de configuración
+    // Variables de configuracion
     var JSON_URL = 'temas_ps3_conlinks.json';
     var PAGE_SIZE = 12;
     var PALABRAS_ADULTO = ['adult', '18+', 'girls/adult', 'sexy', 'ecchi', 'hentai', 'babes', 'harem', 'j-idols', 'j-idol', 'people','Girl','Girls'];
@@ -336,7 +353,7 @@
                         construirSidebar();
                         aplicarFiltros();
                     } catch(e) {
-                        grid.innerHTML = '<div style="color:red">Error de memoria o JSON inválido.</div>';
+                        grid.innerHTML = '<div style="color:red">Error de memoria o JSON invalido.</div>';
                     }
                 } else {
                     grid.innerHTML = '<div style="color:red">No se pudo cargar el archivo JSON (Error ' + xhr.status + ').</div>';
@@ -346,22 +363,14 @@
         xhr.send(null);
     }
 
-    // ===== SIDEBAR: construir lista de géneros =====
+    // ===== SIDEBAR: construir lista de generos =====
     function construirSidebar() {
-        // Contar cuántos temas hay por género (excluyendo adultos si están ocultos)
-        var genreCount = {};
+        // Recoger generos unicos y ordenarlos alfabeticamente
+        var seen = {};
+        var genres = [];
         for (var i = 0; i < allThemes.length; i++) {
             var g = allThemes[i].genero;
-            if (!genreCount[g]) genreCount[g] = 0;
-            genreCount[g]++;
-        }
-
-        // Ordenar géneros alfabéticamente
-        var genres = [];
-        for (var key in genreCount) {
-            if (genreCount.hasOwnProperty(key)) {
-                genres.push(key);
-            }
+            if (!seen[g]) { seen[g] = true; genres.push(g); }
         }
         genres.sort(function(a, b) {
             if (a < b) return -1;
@@ -369,45 +378,55 @@
             return 0;
         });
 
-        // Construir HTML del sidebar
-        var html = '<button class="genre-item active" id="genre-item-todos" onclick="volverInicio()">' +
-                   'Todos <span class="genre-item-count">' + allThemes.length + '</span></button>';
+        // "Todos" lleva el total entre parentesis, el resto solo el nombre
+        var html = '<button class="genre-item active" id="genre-btn-todos" onclick="volverInicio()">' +
+                   'Todos <span class="todos-count">' + allThemes.length + '</span></button>';
 
         for (var j = 0; j < genres.length; j++) {
-            var g = genres[j];
-            var safeG = g.replace(/'/g, "\\'");
-            html += '<button class="genre-item" id="genre-item-' + j + '" onclick="filtrarPorGenero(\'' + safeG + '\')">' +
-                    g + '<span class="genre-item-count">' + genreCount[g] + '</span></button>';
+            var gn = genres[j];
+            // Escapar comillas simples para el onclick
+            var safeG = gn.replace(/'/g, "&#39;");
+            html += '<button class="genre-item" onclick="filtrarPorGenero(\'' + safeG + '\')">' + gn + '</button>';
         }
 
         genreList.innerHTML = html;
     }
 
-    // Actualiza el resaltado del item activo en el sidebar
+    // Resalta el boton activo en el sidebar
     function actualizarSidebarActivo() {
-        // Quitar active de todos
         var items = genreList.getElementsByTagName('button');
         for (var i = 0; i < items.length; i++) {
             items[i].className = 'genre-item';
         }
-        // Poner active al que corresponde
         if (currentGenre === '') {
-            var todos = document.getElementById('genre-item-todos');
-            if (todos) todos.className = 'genre-item active';
+            var todosBtn = document.getElementById('genre-btn-todos');
+            if (todosBtn) todosBtn.className = 'genre-item active';
         } else {
-            // Buscar por texto del botón (sin el count)
             for (var k = 0; k < items.length; k++) {
-                var spans = items[k].getElementsByTagName('span');
-                var label = items[k].innerHTML;
-                if (spans.length > 0) {
-                    label = items[k].innerHTML.replace(spans[0].outerHTML, '');
+                // Texto del boton sin el span del contador
+                var rawText = items[k].innerHTML;
+                var spanTag = items[k].getElementsByTagName('span');
+                if (spanTag.length > 0) {
+                    rawText = rawText.replace(spanTag[0].outerHTML, '');
                 }
-                label = label.replace(/^\s+|\s+$/g, '');
-                if (label === currentGenre) {
+                rawText = rawText.replace(/^\s+|\s+$/g, '');
+                if (rawText === currentGenre) {
                     items[k].className = 'genre-item active';
                     break;
                 }
             }
+        }
+    }
+
+    // Muestra u oculta el contador de genero junto a VERSION PKG
+    function actualizarContadorGenero() {
+        var countEl = document.getElementById('genreFilterCount');
+        if (!countEl) return;
+        if (currentGenre !== '') {
+            countEl.style.display = 'inline-block';
+            countEl.innerHTML = currentGenre + ': ' + filteredThemes.length;
+        } else {
+            countEl.style.display = 'none';
         }
     }
 
@@ -459,6 +478,7 @@
         var imgName = encodeURIComponent(t.nombre + '.png').replace(/'/g, "%27");
         var folder = PREVIEW_FOLDERS[t.preview_idx] || PREVIEW_FOLDERS[0];
         var estiloExtra = esDestacado ? ' style="border-color: #ffb28c; box-shadow: 0 0 10px #ffb28c;"' : '';
+        var safeGenre = t.genero.replace(/'/g, "&#39;");
 
         imageQueue.push({ id: 'img_' + index, src: folder + imgName, name: imgName, idx: t.preview_idx });
 
@@ -466,7 +486,7 @@
             '<div class="preview"><img src="' + G_EMPTY_GIF + '" id="img_' + index + '"></div>' +
             '<div class="card-info">' +
                 '<div class="theme-name">' + t.nombre + '</div>' +
-                '<div class="theme-genre" onclick="filtrarPorGenero(\'' + t.genero.replace(/'/g, "\\'") + '\')">' + t.genero + '</div>' +
+                '<div class="theme-genre" onclick="filtrarPorGenero(\'' + safeGenre + '\')">' + t.genero + '</div>' +
                 '<a href="' + t.descarga + '" class="download-btn">DESCARGAR</a>' +
             '</div>' +
         '</div>';
@@ -513,6 +533,7 @@
 
         grid.innerHTML = html || '<div style="padding:40px;">No se encontraron resultados.</div>';
         statsDiv.innerHTML = filteredThemes.length + ' Temas';
+        actualizarContadorGenero();
 
         dibujarPaginacion();
         setTimeout(procesarColaImagenes, 100);
@@ -583,6 +604,8 @@
         currentPage = 0;
         esModoAleatorio = false;
         actualizarSidebarActivo();
+        var countEl = document.getElementById('genreFilterCount');
+        if (countEl) countEl.style.display = 'none';
         aplicarFiltros();
     };
 
