@@ -118,21 +118,6 @@
             vertical-align: middle;
         }
 
-        /* Contador de genero seleccionado junto a VERSION PKG */
-        .genre-filter-count {
-            display: none;
-            vertical-align: middle;
-            background: #0a1a2a;
-            border: 2px solid #ff6b35;
-            color: #ffb28c;
-            font-weight: bold;
-            font-size: 16px;
-            padding: 0 20px;
-            border-radius: 40px;
-            height: 50px;
-            line-height: 50px;
-            margin-right: 12px;
-        }
 
         .sort-btn.active { background: #ff6b35; color: #0b0f17; border-color: #ff6b35; }
         .btn-genre-active { background: #0b1a2a; border-color: #ffb28c; color: #ffb28c; display: none; }
@@ -257,7 +242,6 @@
         </div>
         <div class="toolbar-right">
             <span class="stats" id="stats">...</span>
-            <span class="genre-filter-count" id="genreFilterCount"></span>
             <a href="https://github.com/kizeo0/PS3-THM-KZ/releases/download/PKG/PS3.THM.KZ.pkg" class="btn-pkg">VERSION PKG</a>
         </div>
     </div>
@@ -443,17 +427,6 @@
         }
     }
 
-    // Muestra u oculta el contador de genero junto a VERSION PKG
-    function actualizarContadorGenero() {
-        var countEl = document.getElementById('genreFilterCount');
-        if (!countEl) return;
-        if (currentGenre !== '') {
-            countEl.style.display = 'inline-block';
-            countEl.innerHTML = currentGenre + ': ' + filteredThemes.length;
-        } else {
-            countEl.style.display = 'none';
-        }
-    }
 
     window.buscarConRetraso = function() {
         clearTimeout(searchTimer);
@@ -552,7 +525,6 @@
 
         grid.innerHTML = html || '<div style="padding:40px;">No se encontraron resultados.</div>';
         statsDiv.innerHTML = filteredThemes.length + ' Temas';
-        actualizarContadorGenero();
 
         dibujarPaginacion();
         setTimeout(procesarColaImagenes, 100);
@@ -608,8 +580,6 @@
         // Si el genero activo era adulto y se ocultan, volver a Todos
         if (!mostrarContenidoAdulto && currentGenre !== '' && esGeneroAdulto(currentGenre)) {
             currentGenre = '';
-            var countEl = document.getElementById('genreFilterCount');
-            if (countEl) countEl.style.display = 'none';
         }
         currentPage = 0;
         // Reconstruir sidebar para mostrar u ocultar generos adultos
@@ -631,8 +601,6 @@
         currentPage = 0;
         esModoAleatorio = false;
         actualizarSidebarActivo();
-        var countEl = document.getElementById('genreFilterCount');
-        if (countEl) countEl.style.display = 'none';
         aplicarFiltros();
     };
 
