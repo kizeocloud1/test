@@ -451,10 +451,16 @@
             text-align: left;
         }
 
+        /*
+         * PS3: 270px llena bien una TV 16:9 (caben ~4 tarjetas por fila)
+         * y en 4:3 (zona ~650px libre) caben ~2, igual de limpio.
+         * Ancho fijo = sin estiramiento en ningún ratio.
+         * Ratio preview: 270 × (225/350) ≈ 174px de alto → sin distorsión.
+         */
         .is-ps3 .theme-card {
-            width: 200px;      /* fijo, sin estiramiento */
-            margin: 6px 5px;
-            border-radius: 10px;
+            width: 270px;
+            margin: 7px 6px;
+            border-radius: 12px;
         }
 
         .preview {
@@ -467,14 +473,9 @@
             overflow: hidden;
         }
 
-        /*
-         * La imagen de preview tiene ratio 350×225 ≈ 1.55:1
-         * En PS3 mantenemos ese mismo ratio escalado a 200px:
-         * 200 × (225/350) ≈ 129px de alto → sin distorsión.
-         */
         .is-ps3 .preview {
-            height: 129px;
-            line-height: 129px;
+            height: 174px;
+            line-height: 174px;
         }
 
         .preview img {
@@ -483,15 +484,14 @@
             vertical-align: middle;
         }
 
-        /* En PS3 la imagen ocupa todo el ancho de la tarjeta, sin estirar */
         .is-ps3 .preview img {
-            width: 200px;
-            height: 129px;
-            object-fit: cover;   /* recorta proporcional, no estira */
+            width: 270px;
+            height: 174px;
+            object-fit: cover;
         }
 
         .card-info    { padding: 20px; }
-        .is-ps3 .card-info { padding: 8px; }
+        .is-ps3 .card-info { padding: 10px 12px; }
 
         .theme-name {
             font-weight: bold;
@@ -502,7 +502,7 @@
             margin-bottom: 8px;
         }
 
-        .is-ps3 .theme-name { font-size: 12px; height: 30px; margin-bottom: 4px; }
+        .is-ps3 .theme-name { font-size: 13px; height: 34px; margin-bottom: 5px; }
 
         .theme-genre {
             background: #1e3b4f;
@@ -518,10 +518,10 @@
         }
 
         .is-ps3 .theme-genre {
-            font-size: 10px;
-            padding: 3px 6px;
-            margin-bottom: 6px;
-            border-radius: 6px;
+            font-size: 11px;
+            padding: 4px 8px;
+            margin-bottom: 8px;
+            border-radius: 7px;
         }
 
         .download-btn {
@@ -536,7 +536,7 @@
             font-size: 15px;
         }
 
-        .is-ps3 .download-btn { font-size: 12px; padding: 7px; border-radius: 18px; }
+        .is-ps3 .download-btn { font-size: 13px; padding: 9px; border-radius: 20px; }
 
         /* ── PAGINACION ───────────────────────────────────────────── */
         .pagination-container { text-align: center; margin: 40px 0; }
@@ -865,14 +865,14 @@
         var extra  = destacado ? ' style="border-color:#ffb28c;"' : '';
         var folder = FOLDERS[t.preview_idx] || FOLDERS[0];
         imageQueue.push({ id:'img_'+id, src:folder+t.imgName, name:t.imgName, idx:t.preview_idx });
-        var iw = isPS3 ? 200 : 350;
-        var ih = isPS3 ? 129 : 225;
+        var iw = isPS3 ? 270 : 350;
+        var ih = isPS3 ? 174 : 225;
         return '<div class="theme-card"' + extra + '>'
              + '<div class="preview"><img src="' + G_EMPTY + '" id="img_' + id + '" width="' + iw + '" height="' + ih + '"></div>'
              + '<div class="card-info">'
              + '<div class="theme-name">' + t.nombre + '</div>'
              + '<div class="theme-genre" onclick="filtrarPorGenero(\'' + t.safeGenre + '\')">' + t.genero + '</div>'
-             + '<a href="' + t.descarga + '" class="download-btn">DESCARGAR</a>'
+             + '<a href="' + t.descarga + '" target="_blank" class="download-btn">DESCARGAR</a>'
              + '</div></div>';
     }
 
