@@ -121,10 +121,30 @@
         .sidebar-cell { display: table-cell; width: 220px; vertical-align: top; padding-right: 18px; }
         .content-cell { display: table-cell; vertical-align: top; }
 
-        /* ===== SIDEBAR ===== */
+        /* ===== SIDEBAR COLABSABLE ===== */
         .genre-sidebar { background: #0a1a2a; border-radius: 18px; border: 2px solid #1e3b4f; border-left: 5px solid #ff6b35; overflow: hidden; }
-        .sidebar-title { background: #ff6b35; color: #0b0f17; font-weight: bold; font-size: 15px; padding: 13px 16px; text-transform: uppercase; letter-spacing: 1px; }
-        .genre-list { overflow: visible; }
+        .sidebar-title {
+            background: #ff6b35;
+            color: #0b0f17;
+            font-weight: bold;
+            font-size: 15px;
+            padding: 13px 16px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            cursor: pointer;
+            user-select: none;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .sidebar-title span:first-child { flex-grow: 1; }
+        .toggle-icon { font-size: 18px; font-weight: bold; margin-left: 10px; }
+        .genre-list {
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            max-height: 0;
+        }
+        .genre-list.open { max-height: 500px; overflow-y: auto; }
         .genre-item {
             display: block;
             width: 100%;
@@ -165,7 +185,7 @@
         .card-info { padding: 20px; }
         .theme-name { font-weight: bold; font-size: 19px; color: #fff; height: 45px; overflow: hidden; margin-bottom: 8px; }
         .theme-genre { background: #1e3b4f; padding: 6px 12px; border-radius: 10px; font-size: 14px; font-weight: bold; color: #ffb28c; margin-bottom: 15px; display: inline-block; border: 1px solid #ff6b35; cursor: pointer; }
-        .download-btn { background: #ff6b35; color: #0b0f17; text-decoration: none; font-weight: bold; padding: 12px; border-radius: 40px; text-align: center; display: block; font-size: 15px; }
+        .download-btn { background: #ff6b35; color: #0b0f17; text-decoration: none; font-weight: bold; padding: 12px; border-radius: 40px; text-align: center; display: block; font-size: 15px; cursor: pointer; }
 
         /* PAGINACIÓN */
         .pagination-container { text-align: center; margin: 40px 0; }
@@ -190,7 +210,71 @@
         .footer { margin-top: 50px; border-top: 3px solid #ff6b3540; padding: 25px 0; color: #b0c8e0; font-size: 16px; }
         .clearfix::after { content: ""; display: table; clear: both; }
 
-        /* ===== ESTILOS ESPECÍFICOS PARA PS3 (4:3 y optimización) ===== */
+        /* ===== MODAL PARA DESCARGA ===== */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.85);
+            z-index: 10000;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+        .modal-content {
+            background: #0f0f0f;
+            border: 2px solid #ff6b35;
+            border-radius: 15px;
+            padding: 25px;
+            width: 85%;
+            max-width: 500px;
+            position: relative;
+            color: #fff;
+        }
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            background: #cc0000;
+            color: #fff;
+            border: none;
+            border-radius: 30px;
+            width: 30px;
+            height: 30px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .modal-link {
+            word-break: break-all;
+            background: #1e3b4f;
+            padding: 12px;
+            border-radius: 8px;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+        .modal-link a {
+            color: #ffb28c;
+            text-decoration: none;
+        }
+        .modal-link a:hover {
+            text-decoration: underline;
+        }
+        .modal-btn {
+            background: #ff6b35;
+            color: #0b0f17;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 5px;
+        }
+
+        /* ===== ESTILOS ESPECÍFICOS PARA PS3 ===== */
         body.is-ps3 {
             background: #0b0f17;
             padding: 10px 0;
@@ -250,7 +334,6 @@
             padding: 8px 12px;
             font-size: 13px;
         }
-        /* En PS3 las tarjetas se muestran en 2 columnas (adaptado a 4:3) */
         body.is-ps3 .theme-card {
             width: 45%;
             max-width: 320px;
@@ -283,6 +366,13 @@
             line-height: 36px;
             font-size: 14px;
             margin: 0 2px;
+        }
+        body.is-ps3 .modal-content {
+            width: 90%;
+            padding: 20px;
+        }
+        body.is-ps3 .modal-link {
+            font-size: 12px;
         }
     </style>
 </head>
@@ -318,7 +408,10 @@
     <div class="body-layout">
         <div class="sidebar-cell">
             <div class="genre-sidebar">
-                <div class="sidebar-title">Generos</div>
+                <div class="sidebar-title" id="toggleGenresBtn">
+                    <span>Géneros</span>
+                    <span class="toggle-icon" id="toggleIcon">+</span>
+                </div>
                 <div class="genre-list" id="genreList">
                     <div style="padding:16px;color:#5a7a90;font-size:13px;">Cargando...</div>
                 </div>
@@ -338,9 +431,24 @@
     </div>
 </div>
 
+<!-- Modal para mostrar el enlace de descarga -->
+<div id="downloadModal" class="modal-overlay" onclick="cerrarModal(event)">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <button class="modal-close" onclick="cerrarModal()">X</button>
+        <h3 style="margin-bottom: 15px;">Enlace de descarga</h3>
+        <div class="modal-link" id="modalLinkContainer">
+            <a href="#" id="modalDownloadLink" target="_blank">Cargando...</a>
+        </div>
+        <div>
+            <button class="modal-btn" id="modalOpenBtn" onclick="abrirEnlace()">Abrir enlace</button>
+            <button class="modal-btn" onclick="cerrarModal()">Cancelar</button>
+        </div>
+    </div>
+</div>
+
 <script>
     // ==============================================================
-    // DETECCIÓN DE PS3 (igual que el archivo de referencia)
+    // DETECCIÓN DE PS3
     // ==============================================================
     (function() {
         var isPS3 = /PS3|PlayStation 3|NetFront/i.test(navigator.userAgent);
@@ -372,8 +480,8 @@
     // ==============================================================
     // ESTADO GLOBAL
     // ==============================================================
-    var allThemes      = [];   // todos los temas con campos precomputados
-    var genresCache    = [];   // lista ordenada de géneros únicos
+    var allThemes      = [];
+    var genresCache    = [];
     var filteredThemes = [];
     var currentPage    = 0;
     var currentGenre   = '';
@@ -383,13 +491,58 @@
     var imageQueue     = [];
     var imgActivos     = 0;
 
-    // Referencias DOM (se asignan una vez)
+    // Referencias DOM
     var grid       = document.getElementById('themeGrid');
     var statsDiv   = document.getElementById('stats');
     var pagDiv     = document.getElementById('pagination');
     var searchInput = document.getElementById('searchInput');
     var genreList  = document.getElementById('genreList');
     var genreBtn   = document.getElementById('genreActiveBtn');
+
+    // ==============================================================
+    // COLABSABLE DEL SIDEBAR
+    // ==============================================================
+    var toggleBtn = document.getElementById('toggleGenresBtn');
+    var genreListContainer = document.getElementById('genreList');
+    var toggleIcon = document.getElementById('toggleIcon');
+
+    function toggleSidebar() {
+        genreListContainer.classList.toggle('open');
+        toggleIcon.textContent = genreListContainer.classList.contains('open') ? '−' : '+';
+    }
+
+    if (toggleBtn) {
+        toggleBtn.addEventListener('click', toggleSidebar);
+    }
+
+    // ==============================================================
+    // MODAL PARA DESCARGA
+    // ==============================================================
+    var modal = document.getElementById('downloadModal');
+    var modalLink = document.getElementById('modalDownloadLink');
+    var currentDownloadUrl = '';
+
+    function mostrarModal(url) {
+        currentDownloadUrl = url;
+        modalLink.href = url;
+        modalLink.textContent = url;
+        modal.style.display = 'flex';
+    }
+
+    function cerrarModal(event) {
+        if (event && event.target !== modal && !event.target.classList.contains('modal-close') && event.target !== document.querySelector('.modal-btn')) {
+            return;
+        }
+        modal.style.display = 'none';
+        currentDownloadUrl = '';
+    }
+
+    function abrirEnlace() {
+        if (currentDownloadUrl) {
+            window.open(currentDownloadUrl, '_blank');
+        }
+        cerrarModal();
+    }
 
     // ==============================================================
     // UTILIDADES
@@ -405,7 +558,7 @@
     }
 
     // ==============================================================
-    // CARGA DEL JSON (procesado por CHUNKS con setTimeout)
+    // CARGA DEL JSON (por chunks)
     // ==============================================================
     function cargarJSON() {
         var xhr = new XMLHttpRequest();
@@ -419,7 +572,7 @@
                     grid.innerHTML = '<div style="color:red">Error: JSON inválido.</div>';
                     return;
                 }
-                xhr = null; // liberar referencia
+                xhr = null;
                 procesarChunk(raw, 0);
             } else {
                 grid.innerHTML = '<div style="color:red">Error al cargar JSON (' + xhr.status + ').</div>';
@@ -447,11 +600,9 @@
             });
         }
 
-        // Mostrar progreso
         grid.innerHTML = '<div style="padding:40px;color:#ffb28c;">Cargando... ' + fin + ' / ' + raw.length + '</div>';
 
         if (fin < raw.length) {
-            // Ceder hilo al navegador y continuar
             setTimeout(function() { procesarChunk(raw, fin); }, 20);
         } else {
             raw = null;
@@ -462,7 +613,7 @@
     }
 
     // ==============================================================
-    // CACHE DE GÉNEROS (según estado +18)
+    // CACHE DE GÉNEROS
     // ==============================================================
     function construirCacheGeneros() {
         var seen   = {};
@@ -479,7 +630,7 @@
     }
 
     // ==============================================================
-    // SIDEBAR
+    // SIDEBAR (contenido dinámico)
     // ==============================================================
     function construirSidebar() {
         var total = 0;
@@ -556,7 +707,7 @@
     }
 
     // ==============================================================
-    // RENDERIZADO DEL GRID (CATÁLOGO)
+    // RENDERIZADO (GRID)
     // ==============================================================
     function crearTarjeta(t, id, destacado) {
         var extra = destacado ? ' style="border-color:#ffb28c;"' : '';
@@ -568,7 +719,7 @@
              + '<div class="card-info">'
              + '<div class="theme-name">' + t.nombre + '</div>'
              + '<div class="theme-genre" onclick="filtrarPorGenero(\'' + t.safeGenre + '\')">' + t.genero + '</div>'
-             + '<a href="' + t.descarga + '" class="download-btn">DESCARGAR</a>'
+             + '<div class="download-btn" onclick="mostrarModal(\'' + t.descarga.replace(/'/g, "\\'") + '\')">DESCARGAR</div>'
              + '</div></div>';
     }
 
@@ -624,7 +775,7 @@
     }
 
     // ==============================================================
-    // COLA DE IMÁGENES CON LÍMITE DE PARALELISMO
+    // COLA DE IMÁGENES
     // ==============================================================
     function procesarColaImagenes() {
         while (imageQueue.length > 0 && imgActivos < IMG_PARALLEL) {
@@ -668,7 +819,7 @@
     };
 
     // ==============================================================
-    // ACCIONES PÚBLICAS
+    // ACCIONES
     // ==============================================================
     window.modoAleatorio = function() {
         esModoAleatorio = true;
@@ -688,7 +839,6 @@
         btn.innerHTML = mostrarAdulto ? '+18 ON' : '+18 OFF';
         btn.className = mostrarAdulto ? 'sort-btn btn-adult active' : 'sort-btn btn-adult';
 
-        // Si el género activo era adulto y se oculta, resetear
         if (!mostrarAdulto && currentGenre !== '') {
             for (var i = 0; i < allThemes.length; i++) {
                 if (allThemes[i].genero === currentGenre && allThemes[i].isAdult) {
@@ -720,15 +870,13 @@
         aplicarFiltros();
     };
 
-    // ==============================================================
-    // LIMPIEZA AL SALIR (evita fugas de memoria en PS3)
-    // ==============================================================
+    // Limpieza al salir
     window.addEventListener('unload', function() {
         allThemes = filteredThemes = imageQueue = genresCache = null;
         if (grid) grid.innerHTML = '';
     });
 
-    // Iniciar carga después de un pequeño delay para que el navegador pinte primero
+    // Iniciar carga
     setTimeout(cargarJSON, 500);
 </script>
 </body>
