@@ -431,6 +431,14 @@
 
         .is-ps3 .grid { min-height: 200px; }
 
+        /*
+         * PC: tarjeta original de 350px
+         * PS3: tarjeta de ancho FIJO en píxeles, igual que la referencia
+         * (que usa 155px fijos para sus tiles).
+         * Con inline-block + text-align:center el navegador las acomoda
+         * automáticamente: en 16:9 caben más columnas, en 4:3 menos,
+         * sin estiramiento porque el ancho nunca cambia.
+         */
         .theme-card {
             width: 350px;
             background: #0e1727;
@@ -443,16 +451,9 @@
             text-align: left;
         }
 
-        /*
-         * PS3: tarjetas en porcentaje del contenedor disponible.
-         * El contenedor es content-cell (100% - sidebar).
-         * 44% de ancho → en 16:9 caben ~3 por fila,
-         *                en 4:3 caben ~2 por fila.
-         * No se necesita detectar el ratio: el % lo resuelve.
-         */
         .is-ps3 .theme-card {
-            width: 44%;
-            margin: 4px 1%;
+            width: 200px;      /* fijo, sin estiramiento */
+            margin: 6px 5px;
             border-radius: 10px;
         }
 
@@ -466,12 +467,31 @@
             overflow: hidden;
         }
 
-        .is-ps3 .preview { height: 110px; line-height: 110px; }
+        /*
+         * La imagen de preview tiene ratio 350×225 ≈ 1.55:1
+         * En PS3 mantenemos ese mismo ratio escalado a 200px:
+         * 200 × (225/350) ≈ 129px de alto → sin distorsión.
+         */
+        .is-ps3 .preview {
+            height: 129px;
+            line-height: 129px;
+        }
 
-        .preview img { max-width: 100%; max-height: 100%; vertical-align: middle; }
+        .preview img {
+            max-width: 100%;
+            max-height: 100%;
+            vertical-align: middle;
+        }
+
+        /* En PS3 la imagen ocupa todo el ancho de la tarjeta, sin estirar */
+        .is-ps3 .preview img {
+            width: 200px;
+            height: 129px;
+            object-fit: cover;   /* recorta proporcional, no estira */
+        }
 
         .card-info    { padding: 20px; }
-        .is-ps3 .card-info { padding: 7px; }
+        .is-ps3 .card-info { padding: 8px; }
 
         .theme-name {
             font-weight: bold;
@@ -482,7 +502,7 @@
             margin-bottom: 8px;
         }
 
-        .is-ps3 .theme-name { font-size: 11px; height: 26px; margin-bottom: 3px; }
+        .is-ps3 .theme-name { font-size: 12px; height: 30px; margin-bottom: 4px; }
 
         .theme-genre {
             background: #1e3b4f;
@@ -498,10 +518,10 @@
         }
 
         .is-ps3 .theme-genre {
-            font-size: 9px;
-            padding: 2px 5px;
-            margin-bottom: 5px;
-            border-radius: 5px;
+            font-size: 10px;
+            padding: 3px 6px;
+            margin-bottom: 6px;
+            border-radius: 6px;
         }
 
         .download-btn {
@@ -516,7 +536,7 @@
             font-size: 15px;
         }
 
-        .is-ps3 .download-btn { font-size: 11px; padding: 6px; border-radius: 16px; }
+        .is-ps3 .download-btn { font-size: 12px; padding: 7px; border-radius: 18px; }
 
         /* ── PAGINACION ───────────────────────────────────────────── */
         .pagination-container { text-align: center; margin: 40px 0; }
@@ -845,8 +865,10 @@
         var extra  = destacado ? ' style="border-color:#ffb28c;"' : '';
         var folder = FOLDERS[t.preview_idx] || FOLDERS[0];
         imageQueue.push({ id:'img_'+id, src:folder+t.imgName, name:t.imgName, idx:t.preview_idx });
+        var iw = isPS3 ? 200 : 350;
+        var ih = isPS3 ? 129 : 225;
         return '<div class="theme-card"' + extra + '>'
-             + '<div class="preview"><img src="' + G_EMPTY + '" id="img_' + id + '" width="350" height="225"></div>'
+             + '<div class="preview"><img src="' + G_EMPTY + '" id="img_' + id + '" width="' + iw + '" height="' + ih + '"></div>'
              + '<div class="card-info">'
              + '<div class="theme-name">' + t.nombre + '</div>'
              + '<div class="theme-genre" onclick="filtrarPorGenero(\'' + t.safeGenre + '\')">' + t.genero + '</div>'
