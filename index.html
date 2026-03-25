@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <title>PS3 THM KZ</title>
     <style>
+        /* =========================================
+           GLOBAL & RESET
+        ========================================= */
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
         body {
             background: #0b0f17;
@@ -14,7 +17,7 @@
             text-align: center;
         }
 
-        /* Contenedor principal con ancho máximo para adaptarse a cualquier pantalla */
+        /* Contenedor principal adaptativo */
         .main-container {
             width: 100%;
             max-width: 1750px;
@@ -23,12 +26,14 @@
             padding: 0 10px;
         }
 
+        /* HEADER */
         .header { overflow: hidden; margin-bottom: 25px; border-bottom: 5px solid #ff6b35; padding-bottom: 20px; text-align: center; }
         .logo-img { height: 115px; float: left; cursor: pointer; }
-
         .social-container { float: right; background: #0a1a2a; padding: 10px 30px; border-radius: 60px; border: 3px solid #ff6b35; margin-top: 15px; }
         .social-icon { width: 62px; height: 62px; margin: 0 7px; vertical-align: middle; }
+        .credits-banner { height: 42px; display: inline-block; margin-top: 73px; margin-bottom: -20px; vertical-align: bottom; }
 
+        /* TOOLBAR */
         .toolbar {
             display: table;
             width: 100%;
@@ -90,7 +95,6 @@
             line-height: 46px;
         }
 
-        .credits-banner { height: 42px; display: inline-block; margin-top: 73px; margin-bottom: -20px; vertical-align: bottom; }
         .stats { display: inline-block; vertical-align: middle; color: #9ab8d9; font-weight: bold; font-size: 18px; margin-right: 20px; }
         .btn-pkg {
             display: inline-block;
@@ -112,7 +116,7 @@
         .btn-adult { border-color: #ff3535; color: #ff9b9b; }
         .btn-adult.active { background: #ff3535; color: white; }
 
-        /* ===== LAYOUT SIDEBAR + GRID (PC) ===== */
+        /* ===== LAYOUT SIDEBAR + GRID ===== */
         .body-layout { display: table; width: 100%; table-layout: fixed; }
         .sidebar-cell { display: table-cell; width: 220px; vertical-align: top; padding-right: 18px; }
         .content-cell { display: table-cell; vertical-align: top; }
@@ -140,8 +144,11 @@
         .todos-count { float: right; background: #0b1a2a; color: #5a7a90; font-size: 12px; padding: 2px 7px; border-radius: 8px; font-weight: normal; }
         .genre-item.active .todos-count { background: #ff6b3530; color: #ffb28c; }
 
-        /* ===== GRID ===== */
-        .grid { text-align: center; min-height: 600px; }
+        /* ===== GRID DE TARJETAS (CATÁLOGO) ===== */
+        .grid {
+            text-align: center;
+            min-height: 600px;
+        }
         .theme-card {
             width: 350px;
             background: #0e1727;
@@ -160,6 +167,7 @@
         .theme-genre { background: #1e3b4f; padding: 6px 12px; border-radius: 10px; font-size: 14px; font-weight: bold; color: #ffb28c; margin-bottom: 15px; display: inline-block; border: 1px solid #ff6b35; cursor: pointer; }
         .download-btn { background: #ff6b35; color: #0b0f17; text-decoration: none; font-weight: bold; padding: 12px; border-radius: 40px; text-align: center; display: block; font-size: 15px; }
 
+        /* PAGINACIÓN */
         .pagination-container { text-align: center; margin: 40px 0; }
         .page-box {
             display: inline-block;
@@ -242,11 +250,13 @@
             padding: 8px 12px;
             font-size: 13px;
         }
+        /* En PS3 las tarjetas se muestran en 2 columnas (adaptado a 4:3) */
         body.is-ps3 .theme-card {
-            width: 100%;
+            width: 45%;
             max-width: 320px;
             margin: 12px auto;
-            display: block;
+            display: inline-block;
+            vertical-align: top;
         }
         body.is-ps3 .preview {
             height: 180px;
@@ -277,15 +287,14 @@
     </style>
 </head>
 <body>
-
 <div class="main-container">
     <div class="header clearfix">
         <img src="recursos/titulo.png" alt="Logo" class="logo-img" onclick="volverInicio()">
         <img src="recursos/credits.png" class="credits-banner">
         <div class="social-container">
-            <a href="https://www.youtube.com/@kizeo0/videos"><img src="recursos/yt.png" class="social-icon" width="62" height="62"></a>
-            <a href="https://github.com/kizeo0"><img src="recursos/git.png" class="social-icon" width="62" height="62"></a>
-            <a href="https://x.com/KiZeo0"><img src="recursos/x.png" class="social-icon" width="62" height="62"></a>
+            <a href="https://www.youtube.com/@kizeo0/videos"><img src="recursos/yt.png" class="social-icon"></a>
+            <a href="https://github.com/kizeo0"><img src="recursos/git.png" class="social-icon"></a>
+            <a href="https://x.com/KiZeo0"><img src="recursos/x.png" class="social-icon"></a>
         </div>
     </div>
 
@@ -547,7 +556,7 @@
     }
 
     // ==============================================================
-    // RENDERIZADO DEL GRID
+    // RENDERIZADO DEL GRID (CATÁLOGO)
     // ==============================================================
     function crearTarjeta(t, id, destacado) {
         var extra = destacado ? ' style="border-color:#ffb28c;"' : '';
