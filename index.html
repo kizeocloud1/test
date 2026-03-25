@@ -335,6 +335,13 @@
             padding: 8px 6px 16px 6px;
         }
 
+        /* NUEVO: envoltorio que centra el contenido y simula 4:3 */
+        .is-ps3 .ps3-content-wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 8px;
+        }
+
         /* ── LAYOUT SIDEBAR + GRID ────────────────────────────────── */
         .body-layout {
             display: table;
@@ -630,29 +637,29 @@
         ya sea 16:9 o 4:3.
     -->
     <div class="ps3-scroll-area">
-
-        <div class="body-layout">
-            <div class="sidebar-cell">
-                <div class="genre-sidebar">
-                    <div class="sidebar-title">Generos</div>
-                    <div class="genre-list" id="genreList">
-                        <div style="padding:12px;color:#5a7a90;font-size:12px;">Cargando...</div>
+        <div class="ps3-content-wrapper">
+            <div class="body-layout">
+                <div class="sidebar-cell">
+                    <div class="genre-sidebar">
+                        <div class="sidebar-title">Generos</div>
+                        <div class="genre-list" id="genreList">
+                            <div style="padding:12px;color:#5a7a90;font-size:12px;">Cargando...</div>
+                        </div>
                     </div>
                 </div>
-            </div>
-            <div class="content-cell">
-                <div id="themeGrid" class="grid">
-                    <div style="padding:40px;color:#ffb28c;">Cargando base de datos...</div>
+                <div class="content-cell">
+                    <div id="themeGrid" class="grid">
+                        <div style="padding:40px;color:#ffb28c;">Cargando base de datos...</div>
+                    </div>
+                    <div class="pagination-container" id="pagination"></div>
                 </div>
-                <div class="pagination-container" id="pagination"></div>
             </div>
-        </div>
 
-        <div class="footer clearfix">
-            <span style="float:left">&#169; PS3 THM KZ</span>
-            <span style="float:right">Youtube KiZeo</span>
-        </div>
-
+            <div class="footer clearfix">
+                <span style="float:left">&#169; PS3 THM KZ</span>
+                <span style="float:right">Youtube KiZeo</span>
+            </div>
+        </div><!-- /ps3-content-wrapper -->
     </div><!-- /ps3-scroll-area -->
 
 </div><!-- /main-container -->
