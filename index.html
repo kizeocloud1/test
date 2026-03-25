@@ -2,82 +2,282 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>PS3 THM KZ - Optimized</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>PS3 THM KZ</title>
     <style>
-        /* Optimizacion de renderizado base */
         * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
-        body { background: #0b0f17; color: #e0e5f0; font-family: Arial, sans-serif; line-height: 1.2; padding: 10px 0; text-align: center; }
-
-        /* Contenedor fluido para 4:3 y 16:9 */
-        .main-container { width: 96%; max-width: 1700px; margin: 0 auto; text-align: left; }
-
-        /* Header Adaptativo */
-        .header { overflow: hidden; margin-bottom: 20px; border-bottom: 5px solid #ff6b35; padding-bottom: 15px; text-align: center; }
-        .logo-img { height: 90px; max-width: 100%; cursor: pointer; display: inline-block; }
-
-        .social-container { display: inline-block; background: #0a1a2a; padding: 5px 15px; border-radius: 40px; border: 2px solid #ff6b35; margin-top: 10px; vertical-align: middle; }
-        .social-icon { width: 45px; height: 45px; margin: 0 5px; vertical-align: middle; }
-
-        /* Toolbar Optimizada */
-        .toolbar { background: #0a1a2a; padding: 10px; border-radius: 15px; margin-bottom: 20px; border-left: 6px solid #ff6b35; min-height: 60px; text-align: center; }
-        .toolbar-left, .toolbar-right { display: inline-block; vertical-align: middle; width: 100%; max-width: 100%; }
-        
-        .search-wrapper { margin: 5px; display: inline-block; }
-        .search-wrapper input { width: 200px; height: 40px; padding: 0 15px; background: #0b1a2a; border: 2px solid #1e3b4f; border-radius: 20px; color: white; font-size: 14px; }
-
-        .btn-aleatorio, .btn-pkg, .sort-btn { 
-            display: inline-block; background: #ff6b35; color: #fff; text-decoration: none; 
-            font-weight: bold; padding: 0 15px; border-radius: 20px; height: 40px; 
-            line-height: 40px; font-size: 13px; border: 2px solid #ff6b35; 
-            cursor: pointer; text-transform: uppercase; margin: 2px;
+        body {
+            background: #0b0f17;
+            color: #e0e5f0;
+            font-family: Arial, sans-serif;
+            line-height: 1.2;
+            padding: 20px 0;
+            text-align: center;
         }
 
-        .sort-btn { background: #1e3b4f; border-color: #1e3b4f; color: #c9d9e8; }
-        .sort-btn.active { background: #ff6b35; color: #0b0f17; }
-        
-        .stats { color: #9ab8d9; font-weight: bold; font-size: 16px; margin: 0 10px; display: inline-block; }
-
-        /* Layout de Columnas para PS3 */
-        .body-layout { width: 100%; text-align: center; }
-        .sidebar-cell { display: inline-block; width: 100%; max-width: 250px; vertical-align: top; margin-bottom: 20px; }
-        .content-cell { display: inline-block; width: 100%; max-width: 1400px; vertical-align: top; }
-
-        /* Sidebar mejorado */
-        .genre-sidebar { background: #0a1a2a; border-radius: 12px; border: 2px solid #1e3b4f; border-left: 5px solid #ff6b35; }
-        .sidebar-title { background: #ff6b35; color: #0b0f17; font-weight: bold; font-size: 14px; padding: 10px; text-transform: uppercase; }
-        .genre-list { max-height: 400px; overflow-y: auto; } /* Evita que la pagina sea eterna */
-        .genre-item { display: block; width: 100%; padding: 10px; background: transparent; border: none; border-bottom: 1px solid #0f2030; color: #b0c8e0; font-size: 13px; text-align: left; cursor: pointer; }
-        .genre-item.active { background: #1e3b4f; color: #ff6b35; }
-
-        /* Grid de temas adaptable */
-        .grid { text-align: center; }
-        .theme-card { 
-            width: 300px; /* Tamaño reducido para mejor carga */
-            background: #0e1727; border-radius: 15px; overflow: hidden; 
-            border: 2px solid #1f3a4c; display: inline-block; 
-            vertical-align: top; margin: 8px; text-align: left; 
+        /* CONTENEDOR PRINCIPAL: FLUIDO PARA 4:3 Y 16:9 */
+        .main-container {
+            width: 95%;
+            max-width: 1300px;
+            margin: 0 auto;
+            text-align: left;
         }
-        .preview { width: 100%; background: #000; text-align: center; border-bottom: 3px solid #ff6b35; height: 180px; line-height: 180px; overflow: hidden; }
-        .preview img { max-width: 100%; max-height: 100%; }
-        
-        .card-info { padding: 15px; }
-        .theme-name { font-weight: bold; font-size: 16px; color: #fff; height: 38px; overflow: hidden; margin-bottom: 5px; }
-        .theme-genre { background: #1e3b4f; padding: 4px 10px; border-radius: 8px; font-size: 12px; color: #ffb28c; display: inline-block; border: 1px solid #ff6b35; margin-bottom: 10px; }
-        .download-btn { background: #ff6b35; color: #0b0f17; text-decoration: none; font-weight: bold; padding: 10px; border-radius: 20px; text-align: center; display: block; font-size: 13px; }
 
-        /* Paginacion */
-        .pagination-container { margin: 30px 0; }
-        .page-box { display: inline-block; padding: 10px 15px; background: #1e3b4f; color: #fff; margin: 3px; border-radius: 8px; border: none; cursor: pointer; }
-        .page-box.active { background: #ff6b35; color: #0b0f17; }
+        /* HEADER RESPONSIVE */
+        .header {
+            overflow: hidden;
+            margin-bottom: 25px;
+            border-bottom: 5px solid #ff6b35;
+            padding-bottom: 20px;
+            text-align: center;
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .logo-img { height: 85px; cursor: pointer; flex-shrink: 0; }
+        .credits-banner { height: 38px; margin: 0 10px; }
+        .social-container {
+            background: #0a1a2a;
+            padding: 8px 20px;
+            border-radius: 60px;
+            border: 3px solid #ff6b35;
+            white-space: nowrap;
+        }
+        .social-icon { width: 48px; height: 48px; margin: 0 5px; vertical-align: middle; }
 
-        .footer { margin-top: 30px; border-top: 2px solid #ff6b3540; padding: 20px; color: #b0c8e0; font-size: 14px; }
+        /* TOOLBAR RESPONSIVE */
+        .toolbar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            background: #0a1a2a;
+            padding: 12px 20px;
+            border-radius: 60px;
+            margin-bottom: 25px;
+            border-left: 6px solid #ff6b35;
+            gap: 12px;
+        }
+        .toolbar-left, .toolbar-right {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 12px;
+        }
+        .search-wrapper {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .search-wrapper input {
+            width: 260px;
+            height: 44px;
+            padding: 0 18px;
+            background: #0b1a2a;
+            border: 2px solid #1e3b4f;
+            border-radius: 50px;
+            color: white;
+            font-size: 14px;
+        }
+        .btn-aleatorio, .btn-pkg {
+            background: #ff6b35;
+            color: #fff;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 0 18px;
+            border-radius: 40px;
+            height: 44px;
+            line-height: 44px;
+            font-size: 13px;
+            border: 2px solid #ff6b35;
+            cursor: pointer;
+            text-transform: uppercase;
+            white-space: nowrap;
+        }
+        .sort-btn {
+            height: 44px;
+            background: #1e3b4f;
+            border: 2px solid #1e3b4f;
+            color: #c9d9e8;
+            padding: 0 18px;
+            border-radius: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 13px;
+            line-height: 40px;
+            white-space: nowrap;
+        }
+        .sort-btn.active { background: #ff6b35; color: #0b0f17; border-color: #ff6b35; }
+        .btn-adult.active { background: #ff3535; color: white; border-color: #ff3535; }
+        .stats { color: #9ab8d9; font-weight: bold; font-size: 16px; }
 
-        /* Media Query para pantallas cuadradas (PS3 Standard) */
-        @media screen and (max-width: 800px) {
-            .theme-card { width: 45%; min-width: 200px; margin: 2%; }
-            .logo-img { height: 60px; }
-            .sidebar-cell { max-width: 100%; }
-            .preview { height: 130px; line-height: 130px; }
+        /* LAYOUT SIDEBAR + GRID: FLEXIBLE */
+        .body-layout {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .sidebar-cell {
+            flex: 0 0 220px;
+        }
+        .content-cell {
+            flex: 1;
+            min-width: 0; /* evita desborde */
+        }
+
+        /* SIDEBAR */
+        .genre-sidebar {
+            background: #0a1a2a;
+            border-radius: 18px;
+            border: 2px solid #1e3b4f;
+            border-left: 5px solid #ff6b35;
+            overflow: hidden;
+        }
+        .sidebar-title {
+            background: #ff6b35;
+            color: #0b0f17;
+            font-weight: bold;
+            font-size: 14px;
+            padding: 12px 14px;
+            text-transform: uppercase;
+        }
+        .genre-item {
+            display: block;
+            width: 100%;
+            padding: 10px 14px;
+            background: transparent;
+            border: none;
+            border-bottom: 1px solid #0f2030;
+            color: #b0c8e0;
+            font-size: 13px;
+            font-weight: bold;
+            text-align: left;
+            cursor: pointer;
+        }
+        .genre-item:hover { background: #112030; color: #ffb28c; }
+        .genre-item.active { background: #1e3b4f; color: #ff6b35; border-left: 4px solid #ff6b35; padding-left: 10px; }
+        .todos-count {
+            float: right;
+            background: #0b1a2a;
+            color: #5a7a90;
+            font-size: 11px;
+            padding: 2px 6px;
+            border-radius: 8px;
+        }
+
+        /* GRID DE TARJETAS */
+        .grid {
+            text-align: center;
+            min-height: 500px;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 20px;
+        }
+        .theme-card {
+            width: 300px;
+            background: #0e1727;
+            border-radius: 20px;
+            overflow: hidden;
+            border: 2px solid #1f3a4c;
+            text-align: left;
+            transition: 0.1s;
+        }
+        .preview {
+            width: 100%;
+            background: #000;
+            text-align: center;
+            border-bottom: 3px solid #ff6b35;
+            height: 200px;
+            line-height: 200px;
+            overflow: hidden;
+        }
+        .preview img { max-width: 100%; max-height: 100%; vertical-align: middle; }
+        .card-info { padding: 16px; }
+        .theme-name {
+            font-weight: bold;
+            font-size: 16px;
+            color: #fff;
+            height: 42px;
+            overflow: hidden;
+            margin-bottom: 8px;
+        }
+        .theme-genre {
+            background: #1e3b4f;
+            padding: 4px 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            color: #ffb28c;
+            margin-bottom: 12px;
+            display: inline-block;
+            border: 1px solid #ff6b35;
+            cursor: pointer;
+        }
+        .download-btn {
+            background: #ff6b35;
+            color: #0b0f17;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 10px;
+            border-radius: 40px;
+            text-align: center;
+            display: block;
+            font-size: 14px;
+        }
+
+        /* PAGINACION */
+        .pagination-container {
+            text-align: center;
+            margin: 40px 0;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 6px;
+        }
+        .page-box {
+            display: inline-block;
+            width: 42px;
+            height: 42px;
+            line-height: 38px;
+            background: #1e3b4f;
+            border: 2px solid #1e3b4f;
+            color: #fff;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 14px;
+            text-align: center;
+        }
+        .page-box.active { background: #ff6b35; border-color: #ff6b35; color: #0b0f17; }
+
+        .footer {
+            margin-top: 40px;
+            border-top: 3px solid #ff6b3540;
+            padding: 20px 0;
+            color: #b0c8e0;
+            font-size: 13px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        /* MEDIA QUERY PARA 4:3 (pantallas cuadradas o modo estándar) */
+        @media (max-width: 1024px) and (min-aspect-ratio: 3/4) {
+            .sidebar-cell { flex-basis: 180px; }
+            .theme-card { width: 280px; }
+            .preview { height: 180px; line-height: 180px; }
+            .toolbar-left, .toolbar-right { gap: 6px; }
+            .search-wrapper input { width: 200px; font-size: 12px; }
+            .btn-aleatorio, .sort-btn, .btn-pkg { padding: 0 12px; height: 38px; line-height: 38px; font-size: 11px; }
+            .stats { font-size: 14px; }
+            .theme-name { font-size: 14px; height: 38px; }
+        }
+
+        @media (max-width: 800px) {
+            .sidebar-cell { flex-basis: 160px; }
+            .theme-card { width: 260px; }
+            .preview { height: 160px; line-height: 160px; }
         }
     </style>
 </head>
@@ -86,9 +286,11 @@
 <div class="main-container">
     <div class="header">
         <img src="recursos/titulo.png" alt="Logo" class="logo-img" onclick="volverInicio()">
+        <img src="recursos/credits.png" class="credits-banner">
         <div class="social-container">
             <a href="https://www.youtube.com/@kizeo0/videos"><img src="recursos/yt.png" class="social-icon"></a>
             <a href="https://github.com/kizeo0"><img src="recursos/git.png" class="social-icon"></a>
+            <a href="https://x.com/KiZeo0"><img src="recursos/x.png" class="social-icon"></a>
         </div>
     </div>
 
@@ -96,11 +298,16 @@
         <div class="toolbar-left">
             <div class="search-wrapper">
                 <input type="text" id="searchInput" placeholder="Buscar..." onkeyup="buscarConRetraso()">
+                <button class="btn-aleatorio" onclick="modoAleatorio()">Aleatorio</button>
             </div>
-            <button class="btn-aleatorio" onclick="modoAleatorio()">Aleatorio</button>
-            <button class="sort-btn" id="adultBtn" onclick="toggleAdulto()">+18 OFF</button>
-            <span class="stats" id="stats">0</span>
-            <a href="https://github.com/kizeo0/PS3-THM-KZ/releases/download/PKG/PS3.THM.KZ.pkg" class="btn-pkg">PKG</a>
+            <div class="sort-buttons">
+                <button class="sort-btn btn-adult" id="adultBtn" onclick="toggleAdulto()">+18 OFF</button>
+                <button class="sort-btn btn-genre-active" id="genreActiveBtn" style="display:none;" onclick="volverInicio()"></button>
+            </div>
+        </div>
+        <div class="toolbar-right">
+            <span class="stats" id="stats">...</span>
+            <a href="https://github.com/kizeo0/PS3-THM-KZ/releases/download/PKG/PS3.THM.KZ.pkg" class="btn-pkg">VERSION PKG</a>
         </div>
     </div>
 
@@ -109,229 +316,407 @@
             <div class="genre-sidebar">
                 <div class="sidebar-title">Generos</div>
                 <div class="genre-list" id="genreList">
-                    <div style="padding:10px; color:#5a7a90;">Cargando...</div>
+                    <div style="padding:16px;color:#5a7a90;">Cargando...</div>
                 </div>
             </div>
         </div>
         <div class="content-cell">
             <div id="themeGrid" class="grid">
-                <div style="padding:20px; color:#ffb28c;">Iniciando sistema...</div>
+                <div style="padding:40px;color:#ffb28c;">Cargando base de datos...</div>
             </div>
             <div class="pagination-container" id="pagination"></div>
         </div>
     </div>
 
     <div class="footer">
-        <div>© PS3 THM KZ | By KiZeo</div>
+        <span>© PS3 THM KZ</span>
+        <span>Youtube KiZeo</span>
     </div>
 </div>
 
 <script>
-    /* ── CONFIGURACION OPTIMIZADA ── */
+    /* ===== CONFIGURACIÓN OPTIMIZADA ===== */
     var JSON_URL      = 'temas_ps3_conlinks.json';
-    var PAGE_SIZE     = 8;       /* Menos items por pagina = mas estabilidad en PS3 */
-    var CHUNK_SIZE    = 250;     /* Procesamiento mas suave para evitar freezes */
-    var IMG_PARALLEL  = 1;       /* Carga de imagenes de 1 en 1 para no saturar el bus de datos */
-    var SEARCH_DELAY  = 800;
+    var PAGE_SIZE     = 12;
+    var CHUNK_SIZE    = 400;
+    var IMG_PARALLEL  = 2;
+    var SEARCH_DELAY  = 600;
 
-    var ADULTO_KEYS = ['adult','18+','sexy','ecchi','hentai','babes','girl','girls'];
+    var ADULTO_KEYS = ['adult','18+','girls/adult','sexy','ecchi','hentai',
+                       'babes','harem','j-idols','j-idol','girl','girls'];
     var G_EMPTY = "data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7";
+
     var BASE = 'https://raw.githubusercontent.com/kizeocloud1/Previews-compresed/main/';
-    var FOLDERS = [BASE+'previews1/', BASE+'previews2/', BASE+'previews3/', BASE+'previews4/', BASE+'previews5/', BASE+'previews6/'];
+    var FOLDERS = [
+        BASE+'previews1/', BASE+'previews2/', BASE+'previews3/',
+        BASE+'previews4/', BASE+'previews5/', BASE+'previews6/'
+    ];
 
-    /* ── ESTADO ── */
-    var allThemes = [];
-    var genresCache = [];
+    /* ===== ESTADO ===== */
+    var allThemes      = [];
+    var genresCache    = [];
     var filteredThemes = [];
-    var currentPage = 0;
-    var currentGenre = '';
-    var mostrarAdulto = false;
-    var imageQueue = [];
-    var imgActivos = 0;
+    var currentPage    = 0;
+    var currentGenre   = '';
+    var mostrarAdulto  = false;
+    var esModoAleatorio = false;
+    var searchTimer    = null;
+    var imageQueue     = [];
+    var imgActivos     = 0;
+    var loadTimer      = null;      // para setTimeout de procesarCola
+    var cancelLoad     = false;     // flag para abortar carga de JSON
+    var currentXHR     = null;
 
-    /* DOM */
-    var grid = document.getElementById('themeGrid');
-    var statsDiv = document.getElementById('stats');
-    var pagDiv = document.getElementById('pagination');
+    /* ===== REFERENCIAS DOM ===== */
+    var grid       = document.getElementById('themeGrid');
+    var statsDiv   = document.getElementById('stats');
+    var pagDiv     = document.getElementById('pagination');
     var searchInput = document.getElementById('searchInput');
-    var genreList = document.getElementById('genreList');
+    var genreList  = document.getElementById('genreList');
+    var genreBtn   = document.getElementById('genreActiveBtn');
 
+    /* ===== UTILIDADES ===== */
+    function trim(s) { return s.replace(/^\s+|\s+$/g, ''); }
+
+    function calcIsAdult(gen) {
+        var g = gen.toLowerCase();
+        for (var i = 0; i < ADULTO_KEYS.length; i++) {
+            if (g.indexOf(ADULTO_KEYS[i]) !== -1) return true;
+        }
+        return false;
+    }
+
+    /* ===== CARGA JSON CON CHUNKS Y CANCELACIÓN ===== */
     function cargarJSON() {
+        if (currentXHR) {
+            try { currentXHR.abort(); } catch(e) {}
+            currentXHR = null;
+        }
+        cancelLoad = false;
         var xhr = new XMLHttpRequest();
-        xhr.open('GET', JSON_URL + '?v=' + Math.random(), true);
+        currentXHR = xhr;
+        xhr.open('GET', JSON_URL + '?t=' + Date.now(), true);
         xhr.onreadystatechange = function() {
-            if (xhr.readyState === 4 && xhr.status === 200) {
-                var raw = JSON.parse(xhr.responseText);
+            if (xhr.readyState !== 4) return;
+            if (cancelLoad) return;
+            if (xhr.status === 200 || xhr.status === 0) {
+                var raw;
+                try { raw = JSON.parse(xhr.responseText); }
+                catch(e) {
+                    grid.innerHTML = '<div style="color:red">Error: JSON invalido.</div>';
+                    currentXHR = null;
+                    return;
+                }
+                currentXHR = null;
                 procesarChunk(raw, 0);
+            } else {
+                grid.innerHTML = '<div style="color:red">Error al cargar JSON (' + xhr.status + ').</div>';
+                currentXHR = null;
             }
         };
-        xhr.send();
+        xhr.send(null);
     }
 
     function procesarChunk(raw, offset) {
+        if (cancelLoad) return;
         var fin = Math.min(offset + CHUNK_SIZE, raw.length);
         for (var i = offset; i < fin; i++) {
-            var item = raw[i];
+            var item   = raw[i];
             var nombre = item.archivo.replace(/\.p3t$/i, '');
-            var gen = item.genero || 'Otro';
-            var isA = false;
-            var lowGen = gen.toLowerCase();
-            for(var k=0; k<ADULTO_KEYS.length; k++) {
-                if(lowGen.indexOf(ADULTO_KEYS[k]) !== -1) { isA = true; break; }
-            }
-
+            var genero = item.genero || 'Otro';
             allThemes.push({
-                d: item.descarga,
-                g: gen,
-                n: nombre,
-                nl: nombre.toLowerCase(),
-                ia: isA,
-                img: encodeURIComponent(nombre + '.png').replace(/'/g, '%27'),
-                idx: item.preview_idx || 0
+                descarga:    item.descarga,
+                genero:      genero,
+                nombre:      nombre,
+                nombreLower: nombre.toLowerCase(),
+                generoLower: genero.toLowerCase(),
+                isAdult:     calcIsAdult(genero),
+                imgName:     encodeURIComponent(nombre + '.png').replace(/'/g, '%27'),
+                safeGenre:   genero.replace(/'/g, '&#39;'),
+                preview_idx: item.preview_idx || 0
             });
         }
 
-        if (fin < raw.length) {
-            grid.innerHTML = "Cargando base: " + Math.floor((fin/raw.length)*100) + "%";
-            setTimeout(function() { procesarChunk(raw, fin); }, 15);
+        grid.innerHTML = '<div style="padding:40px;color:#ffb28c;">Cargando... ' + fin + ' / ' + raw.length + '</div>';
+        if (fin < raw.length && !cancelLoad) {
+            setTimeout(function() { procesarChunk(raw, fin); }, 20);
         } else {
             raw = null;
-            initApp();
-        }
-    }
-
-    function initApp() {
-        construirCacheGeneros();
-        construirSidebar();
-        aplicarFiltros();
-    }
-
-    function construirCacheGeneros() {
-        var seen = {};
-        genresCache = [];
-        for (var i = 0; i < allThemes.length; i++) {
-            var t = allThemes[i];
-            if (!seen[t.g] && (!t.ia || mostrarAdulto)) {
-                seen[t.g] = true;
-                genresCache.push(t.g);
+            if (!cancelLoad) {
+                construirCacheGeneros();
+                construirSidebar();
+                aplicarFiltros();
             }
         }
-        genresCache.sort();
+    }
+
+    /* ===== CACHE GENEROS ===== */
+    function construirCacheGeneros() {
+        var seen = {};
+        var result = [];
+        for (var i = 0; i < allThemes.length; i++) {
+            var g = allThemes[i].genero;
+            if (!seen[g] && (!allThemes[i].isAdult || mostrarAdulto)) {
+                seen[g] = true;
+                result.push(g);
+            }
+        }
+        result.sort(function(a,b){ return a<b ? -1 : a>b ? 1 : 0; });
+        genresCache = result;
     }
 
     function construirSidebar() {
-        var html = '<button class="genre-item '+(currentGenre===''?'active':'')+'" onclick="volverInicio()">TODOS</button>';
-        for (var i = 0; i < genresCache.length; i++) {
-            var g = genresCache[i];
-            html += '<button class="genre-item '+(currentGenre===g?'active':'')+'" onclick="filtrarPorGenero(\''+g.replace(/'/g, "\\'")+'\')">'+g+'</button>';
+        var total = 0;
+        for (var i=0; i<allThemes.length; i++) {
+            if (!allThemes[i].isAdult || mostrarAdulto) total++;
         }
-        genreList.innerHTML = html;
+        var parts = [];
+        var activeTodos = (currentGenre === '') ? ' active' : '';
+        parts.push('<button class="genre-item' + activeTodos + '" data-genre="">Todos <span class="todos-count">' + total + '</span></button>');
+        for (var j=0; j<genresCache.length; j++) {
+            var gn = genresCache[j];
+            var activeG = (gn === currentGenre) ? ' active' : '';
+            var safeG = gn.replace(/'/g, '&#39;');
+            parts.push('<button class="genre-item' + activeG + '" data-genre="' + safeG + '">' + gn + '</button>');
+        }
+        genreList.innerHTML = parts.join('');
+        // Asignar evento único al sidebar (mejor rendimiento)
+        var btns = genreList.querySelectorAll('.genre-item');
+        for (var k=0; k<btns.length; k++) {
+            btns[k].onclick = (function(btn) {
+                return function() {
+                    var genre = btn.getAttribute('data-genre');
+                    if (genre === '') volverInicio();
+                    else filtrarPorGenero(genre);
+                };
+            })(btns[k]);
+        }
     }
 
+    function actualizarSidebarActivo() {
+        var items = genreList.querySelectorAll('.genre-item');
+        for (var i=0; i<items.length; i++) {
+            var btn = items[i];
+            var genreVal = btn.getAttribute('data-genre');
+            if ((genreVal === '' && currentGenre === '') || (genreVal === currentGenre)) {
+                btn.classList.add('active');
+            } else {
+                btn.classList.remove('active');
+            }
+        }
+    }
+
+    /* ===== FILTRADO ===== */
+    window.buscarConRetraso = function() {
+        if (searchTimer) clearTimeout(searchTimer);
+        searchTimer = setTimeout(function() {
+            currentGenre = '';
+            currentPage = 0;
+            esModoAleatorio = false;
+            actualizarSidebarActivo();
+            aplicarFiltros();
+        }, SEARCH_DELAY);
+    };
+
     function aplicarFiltros() {
-        var q = searchInput.value.toLowerCase();
+        var query = trim(searchInput.value).toLowerCase();
+        var hayQuery = (query !== '');
+        var hayGenre = (currentGenre !== '');
+        var genreLower = currentGenre.toLowerCase();
         filteredThemes = [];
-        for (var i = 0; i < allThemes.length; i++) {
+
+        if (hayGenre) {
+            genreBtn.style.display = 'inline-block';
+            genreBtn.innerHTML = currentGenre + ' X';
+        } else {
+            genreBtn.style.display = 'none';
+        }
+
+        for (var i=0; i<allThemes.length; i++) {
             var t = allThemes[i];
-            if (!mostrarAdulto && t.ia) continue;
-            if (q && t.nl.indexOf(q) === -1) continue;
-            if (currentGenre && t.g !== currentGenre) continue;
+            if (!mostrarAdulto && t.isAdult) continue;
+            if (hayQuery && t.nombreLower.indexOf(query) === -1) continue;
+            if (hayGenre && t.generoLower !== genreLower) continue;
             filteredThemes.push(t);
         }
-        currentPage = 0;
         render();
+    }
+
+    /* ===== RENDER (optimizado) ===== */
+    function crearTarjeta(t, id, destacado) {
+        var extra = destacado ? ' style="border-color:#ffb28c;"' : '';
+        var folder = FOLDERS[t.preview_idx] || FOLDERS[0];
+        imageQueue.push({ id: 'img_' + id, src: folder + t.imgName, name: t.imgName, idx: t.preview_idx, elementoId: id });
+        return '<div class="theme-card"' + extra + '>' +
+               '<div class="preview"><img src="' + G_EMPTY + '" id="img_' + id + '" width="300" height="200"></div>' +
+               '<div class="card-info">' +
+               '<div class="theme-name">' + t.nombre + '</div>' +
+               '<div class="theme-genre" data-genre-filter="' + t.safeGenre + '">' + t.genero + '</div>' +
+               '<a href="' + t.descarga + '" class="download-btn">DESCARGAR</a>' +
+               '</div></div>';
     }
 
     function render() {
-        /* Limpieza agresiva de memoria antes de renderizar */
+        // Limpiar cola y cancelar carga de imágenes anterior
         imageQueue = [];
+        if (loadTimer) clearTimeout(loadTimer);
         imgActivos = 0;
-        
+
+        var parts = [];
+        // Destacados solo en portada
+        if (!esModoAleatorio && currentPage===0 && !currentGenre && !trim(searchInput.value)) {
+            var n=0;
+            for (var k=0; k<allThemes.length && n<2; k++) {
+                if (allThemes[k].genero === 'AnimugenZ') {
+                    parts.push(crearTarjeta(allThemes[k], 'dest_'+n, true));
+                    n++;
+                }
+            }
+        }
+
         var start = currentPage * PAGE_SIZE;
         var end = Math.min(start + PAGE_SIZE, filteredThemes.length);
-        var html = "";
-
-        for (var i = start; i < end; i++) {
-            var t = filteredThemes[i];
-            var folder = FOLDERS[t.idx] || FOLDERS[0];
-            var imgId = "img_" + i;
-            imageQueue.push({id: imgId, src: folder + t.img});
-
-            html += '<div class="theme-card">' +
-                    '<div class="preview"><img src="'+G_EMPTY+'" id="'+imgId+'"></div>' +
-                    '<div class="card-info">' +
-                        '<div class="theme-name">'+t.n+'</div>' +
-                        '<div class="theme-genre">'+t.g+'</div>' +
-                        '<a href="'+t.d+'" class="download-btn">DESCARGAR</a>' +
-                    '</div></div>';
+        for (var i=start; i<end; i++) {
+            parts.push(crearTarjeta(filteredThemes[i], i, false));
         }
 
-        grid.innerHTML = html || '<div style="padding:20px;">Sin resultados</div>';
-        statsDiv.innerHTML = filteredThemes.length;
+        grid.innerHTML = parts.length ? parts.join('') : '<div style="padding:40px;">No se encontraron resultados.</div>';
+        statsDiv.innerHTML = filteredThemes.length + ' Temas';
+
+        // Asignar eventos de género a las etiquetas recién creadas
+        var genreSpans = grid.querySelectorAll('.theme-genre');
+        for (var g=0; g<genreSpans.length; g++) {
+            (function(span) {
+                var gen = span.getAttribute('data-genre-filter');
+                span.onclick = function() { filtrarPorGenero(gen); };
+            })(genreSpans[g]);
+        }
+
         dibujarPaginacion();
-        setTimeout(procesarImagenes, 100);
+        // Iniciar carga de imágenes con único timer
+        if (loadTimer) clearTimeout(loadTimer);
+        loadTimer = setTimeout(procesarColaImagenes, 80);
     }
 
-    function procesarImagenes() {
-        if (imageQueue.length > 0 && imgActivos < IMG_PARALLEL) {
-            var item = imageQueue.shift();
-            var el = document.getElementById(item.id);
-            if(!el) return procesarImagenes();
-            
-            imgActivos++;
-            el.onload = el.onerror = function() {
-                imgActivos--;
-                procesarImagenes();
-            };
-            el.src = item.src;
-        }
-    }
-
+    /* ===== PAGINACIÓN CON MANEJADOR ÚNICO ===== */
     function dibujarPaginacion() {
         var total = Math.ceil(filteredThemes.length / PAGE_SIZE);
-        if (total <= 1) { pagDiv.innerHTML = ""; return; }
-        
-        var html = "";
-        var inicio = Math.max(0, currentPage - 2);
-        var fin = Math.min(total - 1, inicio + 4);
-
-        for (var i = inicio; i <= fin; i++) {
-            html += '<button class="page-box '+(i===currentPage?'active':'')+'" onclick="irPagina('+i+')">'+(i+1)+'</button>';
+        pagDiv.innerHTML = '';
+        if (total <= 1) return;
+        var startP = Math.max(0, currentPage - 4);
+        var endP = Math.min(total-1, startP+9);
+        for (var p=startP; p<=endP; p++) {
+            var btn = document.createElement('button');
+            btn.className = (p===currentPage) ? 'page-box active' : 'page-box';
+            btn.textContent = p+1;
+            btn.setAttribute('data-page', p);
+            btn.onclick = function(ev) {
+                var pg = parseInt(ev.currentTarget.getAttribute('data-page'));
+                currentPage = pg;
+                render();
+                window.scrollTo(0, 280);
+            };
+            pagDiv.appendChild(btn);
         }
-        pagDiv.innerHTML = html;
     }
 
-    window.irPagina = function(p) { currentPage = p; render(); window.scrollTo(0,0); };
-    
-    window.buscarConRetraso = function() {
-        clearTimeout(window.sT);
-        window.sT = setTimeout(aplicarFiltros, SEARCH_DELAY);
-    };
+    /* ===== CARGA PARALELA DE IMÁGENES CON VERIFICACIÓN ===== */
+    function procesarColaImagenes() {
+        while (imageQueue.length > 0 && imgActivos < IMG_PARALLEL) {
+            var item = imageQueue.shift();
+            var imgEl = document.getElementById(item.id);
+            if (!imgEl) continue;
+            imgActivos++;
+            cargarImagenConFallback(imgEl, item.src, item.idx, item.name);
+        }
+    }
 
-    window.filtrarPorGenero = function(g) { currentGenre = g; construirSidebar(); aplicarFiltros(); };
-    window.volverInicio = function() { currentGenre = ''; searchInput.value = ''; construirSidebar(); aplicarFiltros(); };
+    function cargarImagenConFallback(img, srcActual, idxActual, name) {
+        var currentIdx = idxActual;
+        var intentarSiguiente = function() {
+            currentIdx++;
+            if (currentIdx < FOLDERS.length) {
+                img.onerror = function() { intentarSiguiente(); };
+                img.onload = function() { terminoCarga(); };
+                img.src = FOLDERS[currentIdx] + name;
+            } else {
+                img.style.display = 'none';
+                terminoCarga();
+            }
+        };
+        var terminoCarga = function() {
+            img.onload = null;
+            img.onerror = null;
+            imgActivos--;
+            if (loadTimer) clearTimeout(loadTimer);
+            loadTimer = setTimeout(procesarColaImagenes, 30);
+        };
+        img.onload = terminoCarga;
+        img.onerror = intentarSiguiente;
+        img.src = srcActual;
+    }
+
+    /* ===== ACCIONES GLOBALES ===== */
     window.modoAleatorio = function() {
-        filteredThemes.sort(function() { return 0.5 - Math.random(); });
+        esModoAleatorio = true;
+        for (var i=filteredThemes.length-1; i>0; i--) {
+            var j = Math.floor(Math.random()*(i+1));
+            var tmp = filteredThemes[i];
+            filteredThemes[i] = filteredThemes[j];
+            filteredThemes[j] = tmp;
+        }
+        currentPage = 0;
         render();
     };
+
     window.toggleAdulto = function() {
         mostrarAdulto = !mostrarAdulto;
         var btn = document.getElementById('adultBtn');
-        btn.innerHTML = mostrarAdulto ? "+18 ON" : "+18 OFF";
-        btn.className = mostrarAdulto ? "sort-btn active" : "sort-btn";
+        btn.innerHTML = mostrarAdulto ? '+18 ON' : '+18 OFF';
+        btn.className = mostrarAdulto ? 'sort-btn btn-adult active' : 'sort-btn btn-adult';
+        if (!mostrarAdulto && currentGenre !== '') {
+            for (var i=0; i<allThemes.length; i++) {
+                if (allThemes[i].genero === currentGenre && allThemes[i].isAdult) {
+                    currentGenre = '';
+                    break;
+                }
+            }
+        }
+        currentPage = 0;
         construirCacheGeneros();
         construirSidebar();
         aplicarFiltros();
     };
 
-    /* Iniciar con delay para dejar que el navegador respire */
-    setTimeout(cargarJSON, 1000);
-
-    /* Anti-Freeze: Liberar memoria al cerrar o refrescar */
-    window.onunload = function() {
-        allThemes = null;
-        filteredThemes = null;
+    window.filtrarPorGenero = function(g) {
+        currentGenre = g;
+        searchInput.value = '';
+        currentPage = 0;
+        actualizarSidebarActivo();
+        aplicarFiltros();
     };
+
+    window.volverInicio = function() {
+        searchInput.value = '';
+        currentGenre = '';
+        currentPage = 0;
+        esModoAleatorio = false;
+        actualizarSidebarActivo();
+        aplicarFiltros();
+    };
+
+    /* ===== LIMPIEZA ANTES DE DESCARGA ===== */
+    window.addEventListener('unload', function() {
+        cancelLoad = true;
+        if (currentXHR) { try { currentXHR.abort(); } catch(e) {} }
+        if (searchTimer) clearTimeout(searchTimer);
+        if (loadTimer) clearTimeout(loadTimer);
+        allThemes = filteredThemes = imageQueue = genresCache = null;
+        grid.innerHTML = '';
+    });
+
+    /* INICIO */
+    setTimeout(cargarJSON, 300);
 </script>
 </body>
 </html>
